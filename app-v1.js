@@ -2,15 +2,32 @@ const fs = require('fs');
 const express = require('express');
 
 const app = express();
+
+//Using the express middleware - express.json() to make sure that the data sent
+//with a post request gets added to the request object
 app.use(express.json());
 
 const port = 3000;
 
+// app.get('/', (req, res) => {
+//   res
+//     .status(200)
+//     .json({ message: 'hello from the server side!!!', app: 'Hey' });
+// });
+
+// app.post('/', (req, res) => {
+//   res.send('You can now post at this url!!!');
+// });
+
+//1.  Getting tours
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-const getTours = (req, res) => {
+//Defining routes and actions for our API
+
+//Get tours
+app.get('/api/v1/tours', (req, res) => {
   res.status(200).json({
     status: 'success',
     results: tours.length,
@@ -18,9 +35,18 @@ const getTours = (req, res) => {
       tours,
     },
   });
-};
+});
 
-const createTour = (req, res) => {
+//2.  Creating a tour
+
+/*
+data that is sent - you're expecting it to be on
+the request object, but express doesn't put it 
+there by default. To do so, we have to use the 
+express middleware
+*/
+app.post('/api/v1/tours', (req, res) => {
+  // console.log(req.body);
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
 
@@ -38,9 +64,11 @@ const createTour = (req, res) => {
       });
     }
   );
-};
+});
 
-const getTour = (req, res) => {
+//3.  Getting a single tour by id
+//Optional /api/v1/tours/:id/:x?
+app.get('/api/v1/tours/:id', (req, res) => {
   // console.log(req.params);
   const id = req.params.id * 1;
 
@@ -59,9 +87,10 @@ const getTour = (req, res) => {
       tour,
     },
   });
-};
+});
 
-const updateTour = (req, res) => {
+//4.  Handling a patch request
+app.patch('/api/v1/tours/:id', (req, res) => {
   const id = req.params.id * 1;
   if (id > tours[tours.length - 1].id) {
     res.status(404).json({
@@ -85,9 +114,10 @@ const updateTour = (req, res) => {
       });
     }
   );
-};
+});
 
-const deleteTour = (req, res) => {
+//5.  Deleting a tour
+app.delete('/api/v1/tours/:id', (req, res) => {
   const id = req.params.id * 1;
 
   if (id > tours[tours.length - 1].id) {
@@ -108,21 +138,7 @@ const deleteTour = (req, res) => {
       });
     }
   );
-};
-
-// app.get('/api/v1/tours', getTours);
-// app.post('/api/v1/tours', createTour);
-// app.get('/api/v1/tours/:id', getTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
-app.route('/api/v1/tours').get(getTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
-
+});
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
