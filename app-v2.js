@@ -1,15 +1,20 @@
 const fs = require('fs');
-
 const express = require('express');
-const morgan = require('morgan');
 
 const app = express();
 
-//MIDDLEWARE
-
+//express.json() returns a function which acts as a middleware
+//with a structure like this - (req,res,next)=>{}
 app.use(express.json());
-app.use(morgan('dev'));
 
+//Defining our own middleware - where they are placed in the code matters
+
+app.use((req, res, next) => {
+  console.log('Hello from the middleware 👋');
+  next();
+});
+
+//Adding a property on the request object
 app.use((req, res, next) => {
   req.createdAt = new Date().toISOString();
   next();
@@ -20,10 +25,6 @@ const port = 3000;
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
-
-//ROUTE HANDLER FUNCTIONS
-
-//1.  Tours
 
 const getTours = (req, res) => {
   console.log(req.createdAt);
@@ -58,6 +59,7 @@ const createTour = (req, res) => {
 };
 
 const getTour = (req, res) => {
+  // console.log(req.params);
   const id = req.params.id * 1;
 
   const tour = tours.find(tour => tour.id === id);
@@ -67,14 +69,14 @@ const getTour = (req, res) => {
       status: 'fail',
       message: 'Invalid ID',
     });
-  } else {
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour,
-      },
-    });
   }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
 };
 
 const updateTour = (req, res) => {
@@ -126,55 +128,34 @@ const deleteTour = (req, res) => {
   );
 };
 
-//2.  Users
-const getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'server not responding',
-  });
-};
-const createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'server not responding',
-  });
-};
-const getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'server not responding',
-  });
-};
-const updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'server not responding',
-  });
-};
-const deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'server not responding',
-  });
-};
+// app.get('/api/v1/tours', getTours);
+// app.post('/api/v1/tours', createTour);
+// app.get('/api/v1/tours/:id', getTour);
+// app.patch('/api/v1/tours/:id', updateTour);
+// app.delete('/api/v1/tours/:id', deleteTour);
 
-//ROUTES
+app.route('/api/v1/tours').get(getTours).post(createTour);
 
-const tourRouter = express.Router();
-const userRouter = express.Router();
+///////////
 
-app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
+/*
+Requests on the route - api/v1/tours - route handlers defined for these routes
+act as middleware and thus close the request-response cycle due to which the
+middleware functions below it won't get executed. So, when there are requests on
+the route -/api/v1/tours , the middleware below won't ever get executed as then route 
+handlers are defined above this middleware and thus they will close the request response 
+cycle before it reaches the below middleware
+*/
 
-//1.  Tours
-tourRouter.route('/').get(getTours).post(createTour);
-tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
-
-//2.  Users
-userRouter.route('/').get(getAllUsers).post(createUser);
-userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
-
-//START SERVER
+// app.use((req, res, next) => {
+//   console.log('Hello from the middleware 👋');
+//   next();
+// });
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);

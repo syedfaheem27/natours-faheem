@@ -159,23 +159,29 @@ const deleteUser = (req, res) => {
 };
 
 //ROUTES
-
-const tourRouter = express.Router();
-const userRouter = express.Router();
-
-app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
-
 //1.  Tours
-tourRouter.route('/').get(getTours).post(createTour);
-tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+app.route('/api/v1/tours').get(getTours).post(createTour);
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 //2.  Users
-userRouter.route('/').get(getAllUsers).post(createUser);
-userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+app
+  .route('/api/v1/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 //START SERVER
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
+
+//In the next file, we're going to mount the routers on different routes, i,e, defining separate routers
+//for separate routes and then use them as middleware to handle requests. Here we're currently using a
+//single router - app. In the next we will use two - tourRouter and userRouter

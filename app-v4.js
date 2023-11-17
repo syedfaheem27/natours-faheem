@@ -179,3 +179,6 @@ userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
+
+//Now, after we have mounted routers on different routes, it's time for refactoring our code and
+//putting code in their respective places
