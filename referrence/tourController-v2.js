@@ -2,42 +2,8 @@ const Tour = require('../models/tourModel');
 
 exports.getTours = async (req, res) => {
   try {
-    //1.  BUILD A QUERY
-
-    //A)  Basic filtering
-    const queryObj = { ...req.query };
-    const excludedFields = ['sort', 'page', 'limit', 'fields'];
-    excludedFields.forEach(field => delete queryObj[field]);
-
-    //B)  Advanced filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, match => `$${match}`);
-
-    let query = Tour.find(JSON.parse(queryStr));
-
-    //C)  Sorting
-    if (req.query.sort) {
-      //creating a sortBy string to enable sorting based on
-      //multiple fields. If based on price, prices are equal, sort based on
-      //some other criteria
-
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt');
-    }
-
-    //D) Field Limiting - Limiting fields is a must as it reduces bandwidth usage
-    if (req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields); //projection
-    } else {
-      query = query.select('-__v');
-    }
-
-    //2.  EXECUTE A QUERY
-    const tours = await query;
-
+    const tours = await Tour.find();
+    //find - returns a promise that when awaited gives us the object - converts json into an object
     res.status(200).json({
       status: 'success',
       results: tours.length,
@@ -106,6 +72,9 @@ exports.updateTour = async (req, res) => {
 
 exports.deleteTour = async (req, res) => {
   try {
+    // const deletedTour = await Tour.findByIdAndDelete(req.params.id);
+    // console.log(deletedTour);
+    //A common practice in Restful api's not to send any data upon deletion
     await Tour.findByIdAndDelete(req.params.id);
     res.status(204).json({
       status: 'success',
@@ -118,3 +87,5 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+
+//Now we are going to implement filtering in the next main version

@@ -51,6 +51,7 @@ const tourSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+    select: false, //ensures that this field is never sent along
   },
   startDates: [Date],
 });

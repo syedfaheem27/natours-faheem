@@ -2,41 +2,37 @@ const Tour = require('../models/tourModel');
 
 exports.getTours = async (req, res) => {
   try {
-    //1.  BUILD A QUERY
+    //2 ways to write database queries in mongoose
+    //1.  use the filter object in the find method
+    //2.  use special mongoose methods
 
-    //A)  Basic filtering
+    //1.
+    //Problem with just using the query object(req.query) is that if it contains
+    //query parameters like sort,page,limits,fields - it will return nothing.
+    //so we need to build the query object and exclude these fields
+
+    // const tours = await Tour.find(req.query);
+
     const queryObj = { ...req.query };
     const excludedFields = ['sort', 'page', 'limit', 'fields'];
     excludedFields.forEach(field => delete queryObj[field]);
 
-    //B)  Advanced filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, match => `$${match}`);
+    // console.log(req.query, queryObj);
 
-    let query = Tour.find(JSON.parse(queryStr));
+    const tours = await Tour.find(queryObj);
 
-    //C)  Sorting
-    if (req.query.sort) {
-      //creating a sortBy string to enable sorting based on
-      //multiple fields. If based on price, prices are equal, sort based on
-      //some other criteria
+    //2. Using query methods
+    /*
+      These methods all return a query which allows us to then chain these methods 
+      on them and when we await a query, it is executed and returns with the data.
+      So, we should always build a query first and then execute it later
 
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt');
-    }
-
-    //D) Field Limiting - Limiting fields is a must as it reduces bandwidth usage
-    if (req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields); //projection
-    } else {
-      query = query.select('-__v');
-    }
-
-    //2.  EXECUTE A QUERY
-    const tours = await query;
+    */
+    // const tours = await Tour.find()
+    //   .where('duration')
+    //   .equals(5)
+    //   .where('difficulty')
+    //   .equals('medium');
 
     res.status(200).json({
       status: 'success',
