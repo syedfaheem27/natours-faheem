@@ -21,7 +21,7 @@ const port = 3000;
 
 //1.  Getting tours
 const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
 
 //Defining routes and actions for our API
@@ -62,7 +62,7 @@ app.post('/api/v1/tours', (req, res) => {
           tour: newTour,
         },
       });
-    }
+    },
   );
 });
 
@@ -99,7 +99,7 @@ app.patch('/api/v1/tours/:id', (req, res) => {
     });
   }
   const updatedTours = tours.map(tour =>
-    tour.id === id ? { ...tour, ...req.body } : tour
+    tour.id === id ? { ...tour, ...req.body } : tour,
   );
 
   fs.writeFile(
@@ -112,7 +112,7 @@ app.patch('/api/v1/tours/:id', (req, res) => {
           tour: updatedTours.find(tour => tour.id === id),
         },
       });
-    }
+    },
   );
 });
 
@@ -136,7 +136,7 @@ app.delete('/api/v1/tours/:id', (req, res) => {
         status: 'success',
         data: null,
       });
-    }
+    },
   );
 });
 app.listen(port, () => {

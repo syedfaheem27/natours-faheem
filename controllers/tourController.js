@@ -1,5 +1,13 @@
 const Tour = require('../models/tourModel');
 
+//Middleware to handle requests for the alias route
+exports.aliasTopCheap = async (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty,duration';
+  next();
+};
+
 exports.getTours = async (req, res) => {
   try {
     //1.  BUILD A QUERY
@@ -33,6 +41,20 @@ exports.getTours = async (req, res) => {
       query = query.select(fields); //projection
     } else {
       query = query.select('-__v');
+    }
+
+    //E) Pagination
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+
+    //If we request an invalid page, we will throw an error
+    if (req.query.page) {
+      const totalCount = await Tour.countDocuments();
+      if (skip >= totalCount)
+        throw new Error("The Page you're requesting is not a valid page!");
     }
 
     //2.  EXECUTE A QUERY
