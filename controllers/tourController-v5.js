@@ -1,5 +1,4 @@
 const Tour = require('../models/tourModel');
-const ApiFeatures = require('../utils/apiFeatures');
 
 //Middleware to handle requests for the alias route
 exports.aliasTopCheap = async (req, res, next) => {
@@ -12,14 +11,54 @@ exports.aliasTopCheap = async (req, res, next) => {
 exports.getTours = async (req, res) => {
   try {
     //1.  BUILD A QUERY
-    const features = new ApiFeatures(Tour.find(), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+
+    //A)  Basic filtering
+    const queryObj = { ...req.query };
+    const excludedFields = ['sort', 'page', 'limit', 'fields'];
+    excludedFields.forEach(field => delete queryObj[field]);
+
+    //B)  Advanced filtering
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, match => `$${match}`);
+
+    let query = Tour.find(JSON.parse(queryStr));
+
+    //C)  Sorting
+    if (req.query.sort) {
+      //creating a sortBy string to enable sorting based on
+      //multiple fields. If based on price, prices are equal, sort based on
+      //some other criteria
+
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
+
+    //D) Field Limiting - Limiting fields is a must as it reduces bandwidth usage
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      query = query.select(fields); //projection
+    } else {
+      query = query.select('-__v');
+    }
+
+    //E) Pagination
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+
+    //If we request an invalid page, we will throw an error
+    if (req.query.page) {
+      const totalCount = await Tour.countDocuments();
+      if (skip >= totalCount)
+        throw new Error("The Page you're requesting is not a valid page!");
+    }
 
     //2.  EXECUTE A QUERY
-    const tours = await features.query;
+    const tours = await query;
 
     res.status(200).json({
       status: 'success',
