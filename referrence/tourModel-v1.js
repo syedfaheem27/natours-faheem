@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
 
 //Defining schema with schema options
 const tourSchema = mongoose.Schema(
@@ -9,11 +8,6 @@ const tourSchema = mongoose.Schema(
       required: [true, 'A Tour must have a name'],
       unique: true,
       trim: true,
-    },
-    slug: String,
-    secretTour: {
-      type: Boolean,
-      default: false,
     },
     duration: {
       type: Number,
@@ -66,49 +60,27 @@ const tourSchema = mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    id: false,
+    id: false, //Mongoose assigns each of your schemas an id virtual
+    //getter by default which returns the document's _id field cast to a string, or in the case of ObjectIds, its hexString.
   },
 );
 
+//Virtual Properties - dynamically created from existing properties
+//Not persisted in the database
+
 tourSchema.virtual('durationWeeks').get(function () {
+  // console.log(this); // it throws an error when i use the option toObject:{virtuals:true}
+
   if (!this.duration) return;
+  //The above condition is for cases when u request specific fields where duration
+  //isn't included and in such cases, durationWeeks will be null
 
   return (this.duration / 7).toFixed(2) * 1;
-});
-
-//DOCUMENT MIDDLEWARE
-tourSchema.pre('save', function (next) {
-  this.slug = slugify(this.name, { lower: true });
-  next();
-});
-
-//QUERY MIDDLEWARE
-//this- refers to the query object
-//this pre-find hook is called just before the
-//query is executed
-
-//Assume there's a secret tour meant for vips
-//which we don't want to show the users queries
-//the database for tours. We can make use of the
-//query middleware to do so
-
-tourSchema.pre(/^find/, function (next) {
-  this.find({ secretTour: { $ne: true } });
-  this.startTime = new Date();
-  next();
-});
-
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(
-    `The time it took to execute the query is ${
-      Date.now() - this.startTime
-    } milliseconds`,
-  );
-  // console.log(docs); - queried docs
-  next();
 });
 
 //Creating a model for the defined schema
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
+
+//In the next version, we are going to use the document middleware provided by mongoose

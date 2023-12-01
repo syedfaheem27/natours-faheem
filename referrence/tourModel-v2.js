@@ -11,10 +11,6 @@ const tourSchema = mongoose.Schema(
       trim: true,
     },
     slug: String,
-    secretTour: {
-      type: Boolean,
-      default: false,
-    },
     duration: {
       type: Number,
       required: [true, 'A Tour must have a duration'],
@@ -76,39 +72,33 @@ tourSchema.virtual('durationWeeks').get(function () {
   return (this.duration / 7).toFixed(2) * 1;
 });
 
-//DOCUMENT MIDDLEWARE
+//Document middleware - need to define it before the tour model is compiled
+//the pre save hook can be used before .save() and .create() - not for insertMany()
+
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-//QUERY MIDDLEWARE
-//this- refers to the query object
-//this pre-find hook is called just before the
-//query is executed
+//Can have multiple pre save hooks
 
-//Assume there's a secret tour meant for vips
-//which we don't want to show the users queries
-//the database for tours. We can make use of the
-//query middleware to do so
+// tourSchema.pre('save', function (next) {
+//this - refers to the document being created
+//console.log(this)
+//console.log('Will save the document...');
+//next();
+// });
 
-tourSchema.pre(/^find/, function (next) {
-  this.find({ secretTour: { $ne: true } });
-  this.startTime = new Date();
-  next();
-});
-
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(
-    `The time it took to execute the query is ${
-      Date.now() - this.startTime
-    } milliseconds`,
-  );
-  // console.log(docs); - queried docs
-  next();
-});
+// tourSchema.post('save', function (doc, next) {
+//   console.log(doc); - the saved document
+//   this - saved document
+//    console.log(this.name);
+//   next();
+// });
 
 //Creating a model for the defined schema
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
+
+//In the next version, we'll be using the query middleware
