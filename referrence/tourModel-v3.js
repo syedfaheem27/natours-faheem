@@ -83,6 +83,15 @@ tourSchema.pre('save', function (next) {
 });
 
 //QUERY MIDDLEWARE
+//this- refers to the query object
+//this pre-find hook is called just before the
+//query is executed
+
+//Assume there's a secret tour meant for vips
+//which we don't want to show the users queries
+//the database for tours. We can make use of the
+//query middleware to do so
+
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.startTime = new Date();
@@ -95,19 +104,7 @@ tourSchema.post(/^find/, function (docs, next) {
       Date.now() - this.startTime
     } milliseconds`,
   );
-  next();
-});
-
-//AGGREGATION MIDDLEWARE
-//our secret tour gets included in the aggregation pipeline
-//Solution-1  Add a match field in each aggregation pipeline - repeated code
-//and might forget to add a match field in some pipeline. Thus not efficient
-
-//Solution-2  Add this match field in the aggregation middleware
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  //- returns the pipeline array
-  // console.log(this.pipeline());
+  // console.log(docs); - queried docs
   next();
 });
 
@@ -115,3 +112,5 @@ tourSchema.pre('aggregate', function (next) {
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
+
+//In the next version, we are going to address aggregation middleware
