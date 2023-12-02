@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
 
 //Defining schema with schema options
 const tourSchema = mongoose.Schema(
@@ -10,20 +9,6 @@ const tourSchema = mongoose.Schema(
       required: [true, 'A Tour must have a name'],
       unique: true,
       trim: true,
-      maxlength: [
-        30,
-        'A Tour name must be below or equal than 30 characters long',
-      ],
-      minlength: [
-        10,
-        'A Tour name must be above or equal than 10 characters long',
-      ],
-      // validate: {
-      //   validator: validator.isAlpha,
-      //   message: 'A tour name must only have characters',
-      // },
-
-      // validate: [validator.isAlpha, 'A tour name must only have characters'],
     },
     slug: String,
     secretTour: {
@@ -41,17 +26,11 @@ const tourSchema = mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A Tour must have difficulty'],
-      enum: {
-        values: ['easy', 'medium', 'difficult'],
-        message: 'Difficulty can either be easy, medium or difficult',
-      },
     },
 
     ratingsAverage: {
       type: Number,
       default: 4.5,
-      max: [5, 'Rating must be below or equal than 5'],
-      min: [1, 'Rating must be above or equal than 1'],
     },
     ratingsQuantity: {
       type: Number,
@@ -61,17 +40,7 @@ const tourSchema = mongoose.Schema(
       type: Number,
       required: [true, 'A Tour must have a price'],
     },
-    priceDiscount: {
-      type: Number,
-      validate: {
-        validator: function (val) {
-          //this refers to the document only when a new document is being created
-          //in case of updating a document, it will throw an error
-          return val < this.price;
-        },
-        message: 'The discount should be less than the actual price',
-      },
-    },
+    priceDiscount: Number,
     summary: {
       type: String,
       required: [true, 'A Tour must have a summary'],
@@ -130,6 +99,11 @@ tourSchema.post(/^find/, function (docs, next) {
 });
 
 //AGGREGATION MIDDLEWARE
+//our secret tour gets included in the aggregation pipeline
+//Solution-1  Add a match field in each aggregation pipeline - repeated code
+//and might forget to add a match field in some pipeline. Thus not efficient
+
+//Solution-2  Add this match field in the aggregation middleware
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   //- returns the pipeline array
@@ -141,3 +115,5 @@ tourSchema.pre('aggregate', function (next) {
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
+
+//In the next version, going to add built in and custom validators
