@@ -28,4 +28,19 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
+//If a request reaches here, it means no route handler
+//was able to catch it, so we can define our handler
+//for all the unhandled routes
+
+app.all('*', (req, res, next) => {
+  console.log(req.url);
+  console.log(req.query);
+  console.log(req.params);
+
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+});
+
 module.exports = app;
