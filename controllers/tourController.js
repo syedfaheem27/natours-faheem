@@ -1,5 +1,6 @@
 const Tour = require('../models/tourModel');
 const ApiFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 //Middleware to handle requests for the alias route
@@ -32,6 +33,7 @@ exports.getTours = catchAsync(async (req, res, next) => {
 
 exports.createTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.create(req.body);
+
   res.status(201).json({
     status: 'success',
     tour,
@@ -40,6 +42,13 @@ exports.createTour = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return next(
+      new AppError(`Could not find a tour with the id - ${req.params.id}`, 404),
+    );
+  }
+
   res.status(200).json({
     status: 'success',
     tour,
@@ -51,6 +60,13 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+
+  if (!updatedTour) {
+    return next(
+      new AppError(`Could not find a tour with the id - ${req.params.id}`, 404),
+    );
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -59,8 +75,14 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteTour = catchAsync(async (req, res) => {
-  await Tour.findByIdAndDelete(req.params.id);
+exports.deleteTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tour) {
+    return next(
+      new AppError(`Could not find a tour with the id - ${req.params.id}`, 404),
+    );
+  }
   res.status(204).json({
     status: 'success',
     data: null,
@@ -68,7 +90,7 @@ exports.deleteTour = catchAsync(async (req, res) => {
 });
 
 //Using the aggregation pipeline to get the stats on tours
-exports.getTourStats = catchAsync(async (req, res) => {
+exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
       $match: { ratingsAverage: { $gte: 4.5 } },
@@ -110,7 +132,7 @@ a document for each element. Each output document is the input
 document with the value of the array field replaced by the element.
 */
 
-exports.getMonthlyPlan = catchAsync(async (req, res) => {
+exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   const { year } = req.params;
   const plans = await Tour.aggregate([
     {
