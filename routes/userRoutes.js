@@ -10,6 +10,7 @@ const router = express.Router();
 //a special route only to be used for signing user and you can only
 //post requests to the endpoint
 router.post('/signup', authController.signUp);
+router.post('/login', authController.logIn);
 
 router
   .route('/')
