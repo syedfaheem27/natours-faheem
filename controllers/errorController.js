@@ -18,6 +18,14 @@ function handleValidationDB(err) {
   return new AppError(message, 400);
 }
 
+function handleJwtError(err) {
+  return new AppError('Invalid Token. Please login again.', 401);
+}
+
+function handleJwtExpiryError(err) {
+  return new AppError('Your token has expired!. Please login again.', 401);
+}
+
 function sendErrorDev(err, res) {
   res.status(err.statusCode).json({
     status: err.status,
@@ -59,6 +67,10 @@ module.exports = (err, req, res, next) => {
   if (error.codeName === 'DuplicateKey') error = handleDuplicateFieldsDB(error);
 
   if (error.name === 'ValidationError') error = handleValidationDB(error);
+
+  if (error.name === 'JsonWebTokenError') error = handleJwtError(error);
+
+  if (error.name === 'TokenExpiredError') error = handleJwtExpiryError(error);
 
   if (process.env.NODE_ENV === 'production') sendErrorProd(error, res);
 };

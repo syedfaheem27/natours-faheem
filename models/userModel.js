@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same ',
     },
   },
+  passwordChangedAt: Date,
 });
 
 userSchema.pre('save', async function (next) {
@@ -52,6 +53,20 @@ userSchema.pre('save', async function (next) {
 //Defining a method that's going to be available on all the user instances
 userSchema.methods.correctPassword = async function (incomingPassword) {
   return await bcrypt.compare(incomingPassword, this.password);
+};
+
+//Another instance method to check if password has been changed recenlty
+userSchema.methods.hasChangedPassword = function (JwtTimeStamp) {
+  if (this.passwordChangedAt) {
+    const passwordTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+
+    return passwordTimeStamp < JwtTimeStamp;
+  }
+
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);

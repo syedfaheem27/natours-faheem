@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const ownPromisify = require('../utils/myOwnPromisify');
+// const myOwnPromisify = require('../utils/myOwnPromisify');
 
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -15,7 +18,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
   //and get access to protected routes
   // const newUser = await User.create(req.body);
 
-  const { name, password, email, passwordConfirm, photo } = req.body;
+  const { name, password, email, passwordConfirm, photo, passwordChangedAt } =
+    req.body;
 
   const newUser = await User.create({
     name,
@@ -23,6 +27,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
     photo,
+    passwordChangedAt,
   });
   const token = signToken(newUser._id);
 
@@ -58,4 +63,45 @@ exports.logIn = catchAsync(async (req, res, next) => {
     status: 'success',
     token,
   });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  //1.  Check if there is a token in the request headers
+  let token = null;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token)
+    return next(
+      new AppError('You are not logged in. Please login to get access', 401),
+    );
+  //2.  Verify the token
+
+  //own promisify
+  // const verifyFn = myOwnPromisify(jwt.verify);
+  // const decoded = await verifyFn(token, process.env.JWT_SECRET_KEY);
+
+  const decoded = await promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET_KEY,
+  );
+
+  //3.  Check if the user exists - user can delete the account after the token
+  //was generated initially
+
+  const freshUser = await User.findById(decoded.id);
+
+  //4.  Check if the user didn't change password after the token was issued
+  if (!freshUser.hasChangedPassword(decoded.iat)) {
+    return next(
+      new AppError('User recently changed password! Please login again.', 401),
+    );
+  }
+  //5.
+  req.user = freshUser;
+  next();
 });

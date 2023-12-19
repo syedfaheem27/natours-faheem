@@ -12,9 +12,10 @@ const router = express.Router();
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
 
+//let's try to use a protect middleware to protect all tours
 router
   .route('/')
-  .get(userController.getAllUsers)
+  .get(authController.protect, userController.getAllUsers)
   .post(userController.createUser);
 router
   .route('/:id')
