@@ -18,8 +18,15 @@ exports.signUp = catchAsync(async (req, res, next) => {
   //and get access to protected routes
   // const newUser = await User.create(req.body);
 
-  const { name, password, email, passwordConfirm, photo, passwordChangedAt } =
-    req.body;
+  const {
+    name,
+    password,
+    email,
+    passwordConfirm,
+    photo,
+    passwordChangedAt,
+    role,
+  } = req.body;
 
   const newUser = await User.create({
     name,
@@ -28,6 +35,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm,
     photo,
     passwordChangedAt,
+    role,
   });
   const token = signToken(newUser._id);
 
@@ -79,6 +87,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(
       new AppError('You are not logged in. Please login to get access', 401),
     );
+
   //2.  Verify the token
 
   //own promisify
@@ -95,13 +104,32 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const freshUser = await User.findById(decoded.id);
 
+  if (!freshUser)
+    return next(
+      new AppError(
+        'The user registered for this token no longer exists. Kindly signup again.',
+        401,
+      ),
+    );
+
   //4.  Check if the user didn't change password after the token was issued
   if (!freshUser.hasChangedPassword(decoded.iat)) {
     return next(
       new AppError('User recently changed password! Please login again.', 401),
     );
   }
-  //5.
+  //5.  Grant access to protected route
   req.user = freshUser;
   next();
 });
+
+exports.restrictTo =
+  (...roles) =>
+  (req, res, next) => {
+    if (!roles.includes(req.user.role))
+      return next(
+        new AppError('You are not authorized to perform this access', 403),
+      );
+
+    next();
+  };
