@@ -12,6 +12,10 @@ const router = express.Router();
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
 
+//Defining routes for forgetting and resetting password
+router.post('/forgotPassword', authController.forgotPassword);
+router.patch('/resetPassword/:token', authController.resetPassword);
+
 //let's try to use a protect middleware to protect all tours
 router
   .route('/')

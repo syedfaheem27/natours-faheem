@@ -4,8 +4,8 @@ const { promisify } = require('util');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const ownPromisify = require('../utils/myOwnPromisify');
-// const myOwnPromisify = require('../utils/myOwnPromisify');
+// const ownPromisify = require('../utils/myOwnPromisify');
+const sendEmail = require('../utils/email');
 
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
@@ -133,3 +133,49 @@ exports.restrictTo =
 
     next();
   };
+
+//Adding the password reset functionality
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  //1. Check if there is a username
+  const user = await User.findOne({ email: req.body.email });
+  if (!user)
+    return next(
+      new AppError('The username for that email does not exist.', 404),
+    );
+  //2.  Generate a token
+  const resetToken = user.generateResetPasswordToken();
+  user.save({ validateBeforeSave: false });
+
+  try {
+    //3. Send the token to the mail id of the user
+    const resetURL = `${req.protocol}://${req.get(
+      'host',
+    )}/api/v1/users/resetPassword/${resetToken}`;
+
+    const message = `Forgot your password. Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\n If you didn't forget your password, please igonore this email!`;
+
+    await sendEmail({
+      email: user.email,
+      subject: 'Password reset token (valid for 10 mins.)',
+      message,
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError(
+        'There was a problem sending the email! Try again after sometime.',
+        500,
+      ),
+    );
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'The reset token was sent to your email',
+  });
+});
+
+exports.resetPassword = (req, res, next) => {};
