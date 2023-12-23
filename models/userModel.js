@@ -62,11 +62,6 @@ userSchema.pre('save', async function (next) {
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
-  //Setting a property in a document may take time and
-  //in that case the passwordChangedAt field may hold a value
-  //which is greater than the time stamp of the token
-  //and as such we won't be able to login as it won't be a valid
-  //token. That's why we are subtracting 1000ms from the field
   this.passwordChangedAt = Date.now() - 1000;
 
   next();

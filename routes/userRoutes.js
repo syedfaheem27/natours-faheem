@@ -16,6 +16,16 @@ router.post('/login', authController.logIn);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+//Defining route for updating password of the current user
+router.patch(
+  '/updateMyPassword',
+  authController.protect,
+  authController.updatePassword,
+);
+
+//Defining route for updating data for the currently logged in user
+router.patch('/updateMe', authController.protect, userController.updateMe);
+
 //let's try to use a protect middleware to protect all tours
 router
   .route('/')

@@ -9,6 +9,25 @@ const AppError = require('../utils/appError');
 // const ownPromisify = require('../utils/myOwnPromisify');
 const sendEmail = require('../utils/email');
 
+function createSendToken(user, statusCode, res, sendUser) {
+  const token = signToken(user._id);
+
+  if (sendUser) {
+    res.status(statusCode).json({
+      status: 'success',
+      token,
+      data: {
+        user,
+      },
+    });
+  } else {
+    res.status(statusCode).json({
+      status: 'success',
+      token,
+    });
+  }
+}
+
 function signToken(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -39,15 +58,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordChangedAt,
     role,
   });
-  const token = signToken(newUser._id);
 
-  res.status(201).json({
-    status: 'success',
-    token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, res, true);
 });
 
 exports.logIn = catchAsync(async (req, res, next) => {
@@ -67,12 +79,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
     return next(new AppError('Email or Password is not valid', 401));
 
   //If everything is correct, generate a token and send it along
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 200, res, false);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -146,7 +153,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     );
   //2.  Generate a token
   const resetToken = user.generateResetPasswordToken();
-  user.save({ validateBeforeSave: false });
+  await user.save({ validateBeforeSave: false });
 
   try {
     //3. Send the token to the mail id of the user
@@ -154,7 +161,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       'host',
     )}/api/v1/users/resetPassword/${resetToken}`;
 
-    const message = `Forgot your password. Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}\n If you didn't forget your password, please igonore this email!`;
+    const message = `Forgot your password. Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}
+     If you didn't forget your password, please igonore this email!`;
 
     await sendEmail({
       email: user.email,
@@ -164,7 +172,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
-    user.save({ validateBeforeSave: false });
+    await user.save({ validateBeforeSave: false });
 
     return next(
       new AppError(
@@ -202,17 +210,32 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   //3.  Reset the password for that user and save the document
   user.password = req.body.password;
-  user.passwordConfirm = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
 
   await user.save();
 
   //4.  Log the user in, create and send JWt
-  const token = signToken(user._id);
+  createSendToken(user, 200, res, false);
+});
 
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  //1. Get user from the collection
+
+  //Not using findByIdAndUpdate() - as there are a lot of pre save middlewares
+  //and also the validate function in the schema, that needs to run
+  const user = await User.findById(req.user._id).select('+password');
+
+  //2.  Check if POSTed password is correct
+  if (!(await user.correctPassword(req.body.passwordCurrent)))
+    return next(new AppError('The current password is not a valid one.', 401));
+
+  //3.  Update the password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  //4.Log in the user - send JWT
+  createSendToken(user, 200, res, false);
 });
