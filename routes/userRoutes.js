@@ -26,6 +26,10 @@ router.patch(
 //Defining route for updating data for the currently logged in user
 router.patch('/updateMe', authController.protect, userController.updateMe);
 
+//Route for deleting a user - actually making the user inactive for sometime
+//to allow the user to come back
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
+
 //let's try to use a protect middleware to protect all tours
 router
   .route('/')

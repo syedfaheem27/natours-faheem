@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -67,6 +72,11 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
 //Defining a method that's going to be available on all the user instances
 userSchema.methods.correctPassword = async function (incomingPassword) {
   return await bcrypt.compare(incomingPassword, this.password);
@@ -80,7 +90,7 @@ userSchema.methods.hasChangedPassword = function (JwtTimeStamp) {
       10,
     );
 
-    return passwordTimeStamp < JwtTimeStamp;
+    return passwordTimeStamp > JwtTimeStamp;
   }
 
   return false;

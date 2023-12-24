@@ -35,6 +35,10 @@ function signToken(id) {
 }
 
 exports.signUp = catchAsync(async (req, res, next) => {
+  //problem with this as a user can enter his/her role as an admin
+  //and get access to protected routes
+  // const newUser = await User.create(req.body);
+
   const {
     name,
     password,
@@ -94,6 +98,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
 
   //2.  Verify the token
+
+  //own promisify
+  // const verifyFn = myOwnPromisify(jwt.verify);
+  // const decoded = await verifyFn(token, process.env.JWT_SECRET_KEY);
+
   const decoded = await promisify(jwt.verify)(
     token,
     process.env.JWT_SECRET_KEY,
@@ -113,7 +122,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
 
   //4.  Check if the user didn't change password after the token was issued
-  if (freshUser.hasChangedPassword(decoded.iat)) {
+  if (!freshUser.hasChangedPassword(decoded.iat)) {
     return next(
       new AppError('User recently changed password! Please login again.', 401),
     );
@@ -213,6 +222,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
   //1. Get user from the collection
+
+  //Not using findByIdAndUpdate() - as there are a lot of pre save middlewares
+  //and also the validate function in the schema, that needs to run
   const user = await User.findById(req.user._id).select('+password');
 
   //2.  Check if POSTed password is correct
