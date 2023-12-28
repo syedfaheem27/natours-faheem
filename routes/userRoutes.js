@@ -5,9 +5,6 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-//Adding a unique end point for sign up which doesn't follow the
-//express way of defining routes as defined below because this is
-//a special route only to be used for signing user and you can only
 //post requests to the endpoint
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
@@ -26,11 +23,10 @@ router.patch(
 //Defining route for updating data for the currently logged in user
 router.patch('/updateMe', authController.protect, userController.updateMe);
 
-//Route for deleting a user - actually making the user inactive for sometime
-//to allow the user to come back
+//Route for deleting a user - making user inactive
 router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
-//let's try to use a protect middleware to protect all tours
+//Using a protect middleware to protect all tours
 router
   .route('/')
   .get(authController.protect, userController.getAllUsers)

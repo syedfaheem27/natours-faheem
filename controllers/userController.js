@@ -35,9 +35,6 @@ exports.getUser = (req, res) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  //In this handler, we can use findByIdAndUpdate as we don't need the middlewares
-  //to run as they were only for handling passwords
-
   //1. Check if there is any data related to password
   if (req.body.password || req.body.passwordConfirm)
     return next(

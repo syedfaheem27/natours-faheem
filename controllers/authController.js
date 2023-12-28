@@ -12,6 +12,18 @@ const sendEmail = require('../utils/email');
 function createSendToken(user, statusCode, res, sendUser) {
   const token = signToken(user._id);
 
+  const cookieOptions = {
+    expires: new Date(process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  //ensuring that the password is not sent along
+  user.password = undefined;
+
   if (sendUser) {
     res.status(statusCode).json({
       status: 'success',
