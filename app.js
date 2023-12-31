@@ -4,12 +4,12 @@ const { default: rateLimit } = require('express-rate-limit');
 const { default: helmet } = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
-const hpp = require('hpp');
 
 const app = express();
 

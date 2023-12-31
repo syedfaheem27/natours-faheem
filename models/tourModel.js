@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+const User = require('./userModel');
 
 //Defining schema with schema options
 const tourSchema = mongoose.Schema(
@@ -114,6 +115,7 @@ const tourSchema = mongoose.Schema(
         day: Number,
       },
     ],
+    guides: Array,
   },
 
   {
@@ -127,6 +129,13 @@ tourSchema.virtual('durationWeeks').get(function () {
   if (!this.duration) return;
 
   return (this.duration / 7).toFixed(2) * 1;
+});
+
+//Example of populating a document rather than embedding
+tourSchema.pre('save', async function (next) {
+  const guidesPromises = this.guides.map(async id => await User.findById(id));
+  this.guides = await Promise.all(guidesPromises);
+  next();
 });
 
 //DOCUMENT MIDDLEWARE
