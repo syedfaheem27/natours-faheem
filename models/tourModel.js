@@ -132,6 +132,10 @@ tourSchema.virtual('durationWeeks').get(function () {
 });
 
 //Example of populating a document rather than embedding
+
+//This here however creates a lot of extra overhead when we have to update a user, or delete one
+//as in that case we might have to check if each of the tour contains that user and do the necessary opertaion
+//there also
 tourSchema.pre('save', async function (next) {
   const guidesPromises = this.guides.map(async id => await User.findById(id));
   this.guides = await Promise.all(guidesPromises);
