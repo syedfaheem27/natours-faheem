@@ -131,13 +131,6 @@ tourSchema.virtual('durationWeeks').get(function () {
   return (this.duration / 7).toFixed(2) * 1;
 });
 
-//Example of populating a document rather than embedding
-tourSchema.pre('save', async function (next) {
-  const guidesPromises = this.guides.map(async id => await User.findById(id));
-  this.guides = await Promise.all(guidesPromises);
-  next();
-});
-
 //DOCUMENT MIDDLEWARE
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
