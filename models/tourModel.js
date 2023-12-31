@@ -115,7 +115,12 @@ const tourSchema = mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
 
   {
