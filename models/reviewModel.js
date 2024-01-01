@@ -34,13 +34,24 @@ const reviewSchema = new mongoose.Schema(
 );
 
 //populating the user and tour fields in the review document
+// reviewSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'user',
+//     select: 'name photo',
+//   }).populate({
+//     path: 'tour',
+//     select: 'name',
+//   });
+
+//   next();
+// });
+
+//While cirtually populating reviews, the tour will again get populated by the reviews field
+//which is unnecessary
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
     select: 'name photo',
-  }).populate({
-    path: 'tour',
-    select: 'name',
   });
 
   next();
