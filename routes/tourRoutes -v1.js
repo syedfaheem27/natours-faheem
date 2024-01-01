@@ -2,21 +2,11 @@ const express = require('express');
 
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
-const reviewRouter = require('./reviewRoutes');
+const reviewController = require('../controllers/reviewController');
 
 const router = express.Router();
 
 //1.  Tours
-
-//Nested Routes
-
-//POST /tour/tourId/reviews
-//GET /tour/tourId/reviews
-//GET /tour/tourId/reviews/reviewId
-
-//A better way to handle nested routes
-//It re-routes back to the reviewRouter
-router.use('/:tourId/reviews', reviewRouter);
 
 //Alias Route
 router
@@ -42,6 +32,19 @@ router
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
+  );
+
+//POST /tour/tourId/reviews
+//GET /tour/tourId/reviews
+//GET /tour/tourId/reviews/reviewId
+
+//Nested Routes
+router
+  .route('/:tourId/reviews')
+  .post(
+    authController.protect,
+    authController.restrictTo('user'),
+    reviewController.createReview,
   );
 
 module.exports = router;
