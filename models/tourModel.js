@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
-const User = require('./userModel');
 
 //Defining schema with schema options
 const tourSchema = mongoose.Schema(
