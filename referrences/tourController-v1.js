@@ -2,7 +2,6 @@ const Tour = require('../models/tourModel');
 const ApiFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const factory = require('./handleFactory');
 
 //Middleware to handle requests for the alias route
 exports.aliasTopCheap = async (req, res, next) => {
@@ -76,7 +75,19 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteTour = factory.deleteOne(Tour);
+exports.deleteTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tour) {
+    return next(
+      new AppError(`Could not find a tour with the id - ${req.params.id}`, 404),
+    );
+  }
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
 
 //Using the aggregation pipeline to get the stats on tours
 exports.getTourStats = catchAsync(async (req, res, next) => {

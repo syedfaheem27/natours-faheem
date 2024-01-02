@@ -18,11 +18,11 @@ function handleValidationDB(err) {
   return new AppError(message, 400);
 }
 
-function handleJwtError(err) {
+function handleJwtError() {
   return new AppError('Invalid Token. Please login again.', 401);
 }
 
-function handleJwtExpiryError(err) {
+function handleJwtExpiryError() {
   return new AppError('Your token has expired!. Please login again.', 401);
 }
 

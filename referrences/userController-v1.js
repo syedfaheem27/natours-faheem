@@ -1,7 +1,6 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const factory = require('./handleFactory');
 
 function filterUserData(data, ...dataInclude) {
   const userData = {};
@@ -80,6 +79,9 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-//Only the admin can permanenlty delete the user
-//The user himself just turns the active flag false
-exports.deleteUser = factory.deleteOne(User);
+exports.deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'server not responding',
+  });
+};
