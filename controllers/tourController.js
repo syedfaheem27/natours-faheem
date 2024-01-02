@@ -56,26 +56,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!updatedTour) {
-    return next(
-      new AppError(`Could not find a tour with the id - ${req.params.id}`, 404),
-    );
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: updatedTour,
-    },
-  });
-});
-
+exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
 //Using the aggregation pipeline to get the stats on tours

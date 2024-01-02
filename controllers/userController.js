@@ -64,13 +64,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'server not responding',
-  });
-};
-
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: false });
 
@@ -79,6 +72,12 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+//This is for the admin - don't update passwords
+//with this as pre save hooks won't get executed
+
+//Admin can change the role of a user
+exports.updateUser = factory.updateOne(User);
 
 //Only the admin can permanenlty delete the user
 //The user himself just turns the active flag false
