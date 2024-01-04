@@ -1,8 +1,8 @@
 const Tour = require('../models/tourModel');
-const ApiFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handleFactory');
+// const ApiFeatures = require('../utils/apiFeatures');
+// const AppError = require('../utils/appError');
 
 //Middleware to handle requests for the alias route
 exports.aliasTopCheap = async (req, res, next) => {
@@ -12,43 +12,9 @@ exports.aliasTopCheap = async (req, res, next) => {
   next();
 };
 
-exports.getTours = catchAsync(async (req, res, next) => {
-  //1.  BUILD A QUERY
-  const features = new ApiFeatures(Tour.find().populate('reviews'), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  //2.  EXECUTE A QUERY
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
-
+exports.getTours = factory.getAll(Tour, { path: 'reviews' });
 exports.createTour = factory.createOne(Tour);
-
-exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-
-  if (!tour) {
-    return next(
-      new AppError(`Could not find a tour with the id - ${req.params.id}`, 404),
-    );
-  }
-
-  res.status(200).json({
-    status: 'success',
-    tour,
-  });
-});
-
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
