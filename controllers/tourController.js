@@ -14,7 +14,7 @@ exports.aliasTopCheap = async (req, res, next) => {
 
 exports.getTours = catchAsync(async (req, res, next) => {
   //1.  BUILD A QUERY
-  const features = new ApiFeatures(Tour.find(), req.query)
+  const features = new ApiFeatures(Tour.find().populate('reviews'), req.query)
     .filter()
     .sort()
     .limitFields()
@@ -32,14 +32,7 @@ exports.getTours = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    tour,
-  });
-});
+exports.createTour = factory.createOne(Tour);
 
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id).populate('reviews');

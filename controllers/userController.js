@@ -22,12 +22,14 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     },
   });
 });
+
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'server not responding',
   });
 };
+
 exports.getUser = (req, res) => {
   res.status(500).json({
     status: 'error',
