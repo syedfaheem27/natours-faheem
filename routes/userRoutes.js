@@ -20,6 +20,13 @@ router.patch(
   authController.updatePassword,
 );
 
+router.get(
+  '/me',
+  authController.protect,
+  userController.getMe,
+  userController.getUser,
+);
+
 //Defining route for updating data for the currently logged in user
 router.patch('/updateMe', authController.protect, userController.updateMe);
 
