@@ -12,18 +12,18 @@ function filterUserData(data, ...dataInclude) {
   return userData;
 }
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
-  });
-});
-
+exports.getAllUsers = factory.getAll(User);
 exports.getUser = factory.getOne(User);
+
+//This is for the admin - don't update passwords
+//with this as pre save hooks won't get executed
+
+//Admin can change the role of a user
+exports.updateUser = factory.updateOne(User);
+
+//Only the admin can permanenlty delete the user
+//The user himself just turns the active flag false
+exports.deleteUser = factory.deleteOne(User);
 
 exports.createUser = (req, res) => {
   res.status(500).json({
@@ -74,13 +74,3 @@ exports.getMe = (req, res, next) => {
   req.params.id = req.user._id;
   next();
 };
-
-//This is for the admin - don't update passwords
-//with this as pre save hooks won't get executed
-
-//Admin can change the role of a user
-exports.updateUser = factory.updateOne(User);
-
-//Only the admin can permanenlty delete the user
-//The user himself just turns the active flag false
-exports.deleteUser = factory.deleteOne(User);
