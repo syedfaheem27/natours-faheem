@@ -12,7 +12,7 @@ exports.aliasTopCheap = async (req, res, next) => {
   next();
 };
 
-exports.getTours = factory.getAll(Tour, { path: 'reviews' });
+exports.getTours = factory.getAll(Tour);
 exports.createTour = factory.createOne(Tour);
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 exports.updateTour = factory.updateOne(Tour);

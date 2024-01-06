@@ -87,7 +87,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
     return next(new AppError('Email or Password is not valid', 401));
 
   //If everything is correct, generate a token and send it along
-  createSendToken(user, 200, res, false);
+  createSendToken(user, 200, res, true);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
