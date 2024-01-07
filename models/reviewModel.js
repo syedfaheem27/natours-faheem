@@ -34,6 +34,11 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
+//preventing review duplication - a single user can create only one review
+//for the same tour
+
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
   const stats = await this.aggregate([
     {
