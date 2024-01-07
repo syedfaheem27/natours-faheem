@@ -60,10 +60,30 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
-reviewSchema.post(/^findOneAnd/, async function (doc) {
-  tourUpdateReview(doc.constructor, doc.tour);
+/*
+can't use await this.clone();
+In that case a clone of the original query is created and the query is executed which comes
+from query.findByIdAndUpdate() and due to which the pre /^findAnd/ hook will be executed 
+which will start an infinite loop.
+*/
+
+/*
+this.clone().findOne() vs this.findOne().clone() - In the former case, you're cloning the query and 
+using the findOne() which returns a query which is awaited to give u the results
+
+In the latter case, your create a query first by doing this.findOne() and then clone this query 
+and await it to get the stats which in this case is doing the same thing.
+*/
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.rev = await this.clone().findOne();
+  next();
 });
 
+reviewSchema.post(/^findOneAnd/, function () {
+  tourUpdateReview(this.rev.constructor, this.rev.tour);
+  delete this.rev;
+});
 reviewSchema.post('save', async function () {
   tourUpdateReview(this.constructor, this.tour);
 });

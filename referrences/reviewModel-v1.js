@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const tourUpdateReview = require('../utils/tourReviewUpdate');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -34,23 +33,21 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
-reviewSchema.statics.calcAverageRatings = async function (tourId) {
-  const stats = await this.aggregate([
-    {
-      $match: { tour: tourId },
-    },
-    {
-      $group: {
-        _id: null,
-        nRatings: { $sum: 1 },
-        avgRating: { $avg: '$rating' },
-      },
-    },
-  ]);
+//populating the user and tour fields in the review document
+// reviewSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'user',
+//     select: 'name photo',
+//   }).populate({
+//     path: 'tour',
+//     select: 'name',
+//   });
 
-  return stats;
-};
+//   next();
+// });
 
+//While virtually populating reviews, the tour will again get populated by the reviews field
+//which is unnecessary
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
@@ -58,14 +55,6 @@ reviewSchema.pre(/^find/, function (next) {
   });
 
   next();
-});
-
-reviewSchema.post(/^findOneAnd/, async function (doc) {
-  tourUpdateReview(doc.constructor, doc.tour);
-});
-
-reviewSchema.post('save', async function () {
-  tourUpdateReview(this.constructor, this.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
