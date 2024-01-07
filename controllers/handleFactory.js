@@ -97,6 +97,7 @@ exports.getAll = (Model, popOptions) =>
       .paginate();
 
     //2.  EXECUTE A QUERY
+    // const docs = await features.query.explain();
     const docs = await features.query;
 
     res.status(200).json({
