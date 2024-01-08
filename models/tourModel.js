@@ -187,13 +187,17 @@ tourSchema.post(/^find/, function (docs, next) {
   next();
 });
 
+//Disabling this pre aggregate hook so that
+//$geoNear(aggregate) works as it needs to be the first one
+//in the aggregation pipeline
+
 //AGGREGATION MIDDLEWARE
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  //- returns the pipeline array
-  // console.log(this.pipeline());
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   //- returns the pipeline array
+//   // console.log(this.pipeline());
+//   next();
+// });
 
 //Creating a model for the defined schema
 const Tour = mongoose.model('Tour', tourSchema);
