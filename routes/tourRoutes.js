@@ -35,6 +35,11 @@ router
     tourController.getMonthlyPlan,
   );
 
+//Geo-spatial queries - end point
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getGeoData);
+
 router
   .route('/')
   .get(tourController.getTours)
