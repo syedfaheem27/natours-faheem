@@ -70,6 +70,19 @@ app.get('/', (req, res) => {
   res.status(200).render('base', {
     tour: 'The Park Camper',
     user: 'Faheem',
+    title: 'Exciting tours for adventurous people',
+  });
+});
+
+app.get('/overview', (req, res) => {
+  res.status(200).render('overview', {
+    title: 'All tours',
+  });
+});
+
+app.get('/tour', (req, res) => {
+  res.status(200).render('tour', {
+    title: 'The Forest Hiker',
   });
 });
 
