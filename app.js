@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const { default: rateLimit } = require('express-rate-limit');
@@ -14,7 +15,14 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
+//Setting up pug and the views folder
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 //GLOBAL MIDDLEWARES
+
+//serving static files
+app.use(express.static(`${__dirname}/public`));
 
 //set security headers
 app.use(helmet());
@@ -56,10 +64,12 @@ app.use(
 //limit requests from the same IP
 app.use('/api', limiter);
 
-//serving static files
-app.use(express.static(`${__dirname}/public`));
-
 //ROUTES
+
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
+
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
