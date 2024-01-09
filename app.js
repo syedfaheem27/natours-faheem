@@ -22,7 +22,7 @@ app.set('views', path.join(__dirname, 'views'));
 //GLOBAL MIDDLEWARES
 
 //serving static files
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 //set security headers
 app.use(helmet());
@@ -67,7 +67,10 @@ app.use('/api', limiter);
 //ROUTES
 
 app.get('/', (req, res) => {
-  res.status(200).render('base');
+  res.status(200).render('base', {
+    tour: 'The Park Camper',
+    user: 'Faheem',
+  });
 });
 
 app.use('/api/v1/tours', tourRouter);
