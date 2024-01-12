@@ -6,6 +6,7 @@ const { default: helmet } = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -43,6 +44,9 @@ const limiter = rateLimit({
 
 //Body parser and setting the limit on the body size
 app.use(express.json({ limit: '10kb' }));
+
+//Cookie parser
+app.use(cookieParser());
 
 //Data sanitization - Set Protection against noSQL Injection attacks
 app.use(mongoSanitize());

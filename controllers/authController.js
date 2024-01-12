@@ -12,8 +12,11 @@ const sendEmail = require('../utils/email');
 function createSendToken(user, statusCode, res, sendUser) {
   const token = signToken(user._id);
 
+  const date_now = new Date();
+  date_now.setDate(date_now.getDate() + process.env.JWT_COOKIE_EXPIRES_IN);
+
   const cookieOptions = {
-    expires: new Date(process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    expires: date_now,
     httpOnly: true,
   };
 
@@ -98,7 +101,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  }
+  } else if (req.cookies.jwt) token = req.cookies.jwt;
 
   if (!token)
     return next(
@@ -132,6 +135,35 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   //5.  Grant access to protected route
   req.user = freshUser;
+  next();
+});
+
+//To check if the user is logged in
+//For rendered pages - to conditionally render
+//the navbar - so it won't throw any error
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  //In case of no cookies - just go to the next middleware
+  if (!req.cookies.jwt) return next();
+
+  //2.  Verify the token
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET_KEY,
+  );
+
+  //3.  Check if the user exists - user can delete the account after the token
+  //was generated initially
+
+  const freshUser = await User.findById(decoded.id);
+
+  if (!freshUser) return next();
+
+  //4.  Check if the user didn't change password after the token was issued
+  if (freshUser.hasChangedPassword(decoded.iat)) return next();
+
+  //5.  Pass the user data to the pug template
+  res.locals.user = freshUser;
   next();
 });
 
