@@ -12,7 +12,6 @@ export const logIn = async (email, password) => {
         email,
         password,
       },
-      withCredentials: true,
     });
 
     if (res.data.status === 'success') {
@@ -23,5 +22,19 @@ export const logIn = async (email, password) => {
     }
   } catch (err) {
     showAlert('error', err.response.data.message);
+  }
+};
+
+export const logOut = async () => {
+  try {
+    const res = await axios({
+      method: 'get',
+      url: '/api/v1/users/logout',
+    });
+
+    console.log(res);
+    if (res.data.status === 'success') location.reload(true);
+  } catch (err) {
+    showAlert('error', 'Error Logging out! Try again.');
   }
 };

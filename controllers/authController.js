@@ -12,11 +12,10 @@ const sendEmail = require('../utils/email');
 function createSendToken(user, statusCode, res, sendUser) {
   const token = signToken(user._id);
 
-  const date_now = new Date();
-  date_now.setDate(date_now.getDate() + process.env.JWT_COOKIE_EXPIRES_IN);
-
   const cookieOptions = {
-    expires: date_now,
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
     httpOnly: true,
   };
 
@@ -142,9 +141,16 @@ exports.protect = catchAsync(async (req, res, next) => {
 //For rendered pages - to conditionally render
 //the navbar - so it won't throw any error
 
+//Not using the catch async function here as
+//for logging out a user, we are sending a cookie again
+//to replace the jwt in the browser as it's a read only cookie
+//and thus, the jwt.verify function will report that the jwt is malformed which
+//will go into the catchAsync and result in an error response which we don't want
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
   //In case of no cookies - just go to the next middleware
   if (!req.cookies.jwt) return next();
+
+  if (req.cookies.jwt === 'loggedout') return next();
 
   //2.  Verify the token
   const decoded = await promisify(jwt.verify)(
@@ -166,6 +172,17 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
   res.locals.user = freshUser;
   next();
 });
+
+exports.logOut = async (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+  });
+};
 
 exports.restrictTo =
   (...roles) =>
