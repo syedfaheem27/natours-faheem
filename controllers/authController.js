@@ -100,7 +100,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) token = req.cookies.jwt;
+  } else if (req.cookies.jwt && req.cookies.jwt !== 'loggedout')
+    token = req.cookies.jwt;
 
   if (!token)
     return next(
@@ -132,8 +133,11 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError('User recently changed password! Please login again.', 401),
     );
   }
-  //5.  Grant access to protected route
+  //5-A  Grant access to protected route
   req.user = freshUser;
+
+  //5-B  Pass the user data to the pug template
+  res.locals.user = freshUser;
   next();
 });
 

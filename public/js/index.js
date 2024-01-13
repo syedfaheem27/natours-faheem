@@ -5,7 +5,7 @@ import '@babel/polyfill';
 import { logIn, logOut } from './login';
 import { renderMap } from './mapbox';
 
-const form = document.querySelector('.form');
+const form = document.querySelector('.form--login');
 const map_section = document.getElementById('map');
 const logOut_btn = document.querySelector('.nav__el--logout');
 

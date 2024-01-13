@@ -12025,19 +12025,18 @@ var logOut = exports.logOut = /*#__PURE__*/function () {
           });
         case 3:
           res = _context2.sent;
-          console.log(res);
           if (res.data.status === 'success') location.reload(true);
-          _context2.next = 11;
+          _context2.next = 10;
           break;
-        case 8:
-          _context2.prev = 8;
+        case 7:
+          _context2.prev = 7;
           _context2.t0 = _context2["catch"](0);
           (0, _alerts.showAlert)('error', 'Error Logging out! Try again.');
-        case 11:
+        case 10:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[0, 8]]);
+    }, _callee2, null, [[0, 7]]);
   }));
   return function logOut() {
     return _ref2.apply(this, arguments);
@@ -49393,7 +49392,7 @@ var _login = require("./login");
 var _mapbox = require("./mapbox");
 /*eslint-disable*/
 
-var form = document.querySelector('.form');
+var form = document.querySelector('.form--login');
 var map_section = document.getElementById('map');
 var logOut_btn = document.querySelector('.nav__el--logout');
 if (map_section) {
