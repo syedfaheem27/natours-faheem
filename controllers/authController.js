@@ -141,11 +141,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 //For rendered pages - to conditionally render
 //the navbar - so it won't throw any error
 
-//Not using the catch async function here as
-//for logging out a user, we are sending a cookie again
-//to replace the jwt in the browser as it's a read only cookie
-//and thus, the jwt.verify function will report that the jwt is malformed which
-//will go into the catchAsync and result in an error response which we don't want
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
   //In case of no cookies - just go to the next middleware
   if (!req.cookies.jwt) return next();
