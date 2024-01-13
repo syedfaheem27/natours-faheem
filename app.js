@@ -49,7 +49,7 @@ app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 //parsing data submitted directly via an HTML form
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 //Data sanitization - Set Protection against noSQL Injection attacks
 app.use(mongoSanitize());
