@@ -77,6 +77,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   //before that filter data - user can specify a role
   //so make sure you only update certain fields - email and name
   const filteredData = filterUserData(req.body, 'name', 'email');
+  if (req.file) filteredData.photo = req.file.filename;
 
   const user = await User.findByIdAndUpdate(req.user._id, filteredData, {
     new: true,
