@@ -7,17 +7,6 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handleFactory');
 
-// const multerStorage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'public/img/users');
-//   },
-//   filename: (req, file, cb) => {
-//     let ext = file.mimetype.split('/')[1];
-
-//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-//   },
-// });
-
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {

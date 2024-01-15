@@ -32,10 +32,14 @@ if (logOut_btn) logOut_btn.addEventListener('click', logOut);
 if (userDataForm)
   userDataForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
 
-    await updateUserSettings('data', { name, email });
+    if (document.getElementById('photo').files)
+      form.append('photo', document.getElementById('photo').files[0]);
+
+    await updateUserSettings('data', form);
   });
 
 if (userPasswordForm)
@@ -60,3 +64,26 @@ if (userPasswordForm)
     document.getElementById('password').value = '';
     document.getElementById('password-confirm').value = '';
   });
+
+//Showing image preview before uploading
+
+const image_el = document.querySelector('.form__user-photo');
+const photo_input = document.getElementById('photo');
+
+if (photo_input) {
+  function handleInputChange(e) {
+    const imgFile = e.target.files?.[0];
+
+    if (!imgFile?.type.startsWith('image/')) return;
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      image_el.setAttribute('src', reader.result);
+      image_header.setAttribute('src', reader.result);
+    });
+
+    reader.readAsDataURL(imgFile);
+  }
+
+  photo_input.addEventListener('change', handleInputChange);
+}
