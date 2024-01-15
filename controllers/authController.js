@@ -13,7 +13,9 @@ function createSendToken(user, statusCode, res, sendUser) {
   const token = signToken(user._id);
 
   const cookieOptions = {
-    expires: new Date(process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
     httpOnly: true,
   };
 
@@ -98,7 +100,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  }
+  } else if (req.cookies.jwt && req.cookies.jwt !== 'loggedout')
+    token = req.cookies.jwt;
 
   if (!token)
     return next(
@@ -130,10 +133,55 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError('User recently changed password! Please login again.', 401),
     );
   }
-  //5.  Grant access to protected route
+  //5-A  Grant access to protected route
   req.user = freshUser;
+
+  //5-B  Pass the user data to the pug template
+  res.locals.user = freshUser;
   next();
 });
+
+//To check if the user is logged in
+//For rendered pages - to conditionally render
+//the navbar - so it won't throw any error
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  //In case of no cookies - just go to the next middleware
+  if (!req.cookies.jwt) return next();
+
+  if (req.cookies.jwt === 'loggedout') return next();
+
+  //2.  Verify the token
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET_KEY,
+  );
+
+  //3.  Check if the user exists - user can delete the account after the token
+  //was generated initially
+
+  const freshUser = await User.findById(decoded.id);
+
+  if (!freshUser) return next();
+
+  //4.  Check if the user didn't change password after the token was issued
+  if (freshUser.hasChangedPassword(decoded.iat)) return next();
+
+  //5.  Pass the user data to the pug template
+  res.locals.user = freshUser;
+  next();
+});
+
+exports.logOut = async (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+  });
+};
 
 exports.restrictTo =
   (...roles) =>
