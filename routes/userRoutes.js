@@ -1,12 +1,9 @@
 const express = require('express');
-const multer = require('multer');
 
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
 const router = express.Router();
-
-const upload = multer({ dest: 'public/img/users' });
 
 //post requests to the endpoint
 router.post('/signup', authController.signUp);
@@ -26,7 +23,11 @@ router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
 
 //Defining route for updating data for the currently logged in user
-router.patch('/updateMe', upload.single('photo'), userController.updateMe);
+router.patch(
+  '/updateMe',
+  userController.uploadUserPhoto,
+  userController.updateMe,
+);
 
 //Route for deleting a user - making user inactive
 router.delete('/deleteMe', userController.deleteMe);
