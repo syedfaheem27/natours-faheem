@@ -7,7 +7,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 // const ownPromisify = require('../utils/myOwnPromisify');
-const sendEmail = require('../utils/email');
+const Email = require('../utils/email');
 
 function createSendToken(user, statusCode, res, sendUser) {
   const token = signToken(user._id);
@@ -68,6 +68,10 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordChangedAt,
     role,
   });
+
+  const url = `${req.protocol}://${req.get('host')}/me`;
+
+  await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, res, true);
 });
@@ -215,11 +219,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     const message = `Forgot your password. Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}
      If you didn't forget your password, please igonore this email!`;
 
-    await sendEmail({
-      email: user.email,
-      subject: 'Password reset token (valid for 10 mins.)',
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: 'Password reset token (valid for 10 mins.)',
+    //   message,
+    // });
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
