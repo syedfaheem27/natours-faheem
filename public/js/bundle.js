@@ -49481,28 +49481,26 @@ var loadCheckoutForm = exports.loadCheckoutForm = /*#__PURE__*/function () {
           return (0, _axios.default)("/api/v1/bookings/checkout-session/".concat(tourId));
         case 3:
           session = _context.sent;
-          console.log(session);
-          _context.next = 7;
+          _context.next = 6;
           return (0, _stripeJs.loadStripe)('pk_test_51OaNNvSCBQS8hRHebEqqOgEAu1XDJxGaT9AKZNQ0JCdoOFaEatfEf2KBwm5OOopXrWkJIljsufm05C4MJyRUzW1400mq5R0gpf');
-        case 7:
+        case 6:
           stripe = _context.sent;
-          _context.next = 10;
+          _context.next = 9;
           return stripe.redirectToCheckout({
             sessionId: session.data.session.id
           });
-        case 10:
-          _context.next = 16;
+        case 9:
+          _context.next = 14;
           break;
-        case 12:
-          _context.prev = 12;
+        case 11:
+          _context.prev = 11;
           _context.t0 = _context["catch"](0);
-          console.log(_context.t0);
           (0, _alerts.showAlert)('error', _context.t0);
-        case 16:
+        case 14:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 12]]);
+    }, _callee, null, [[0, 11]]);
   }));
   return function loadCheckoutForm(_x) {
     return _ref.apply(this, arguments);
