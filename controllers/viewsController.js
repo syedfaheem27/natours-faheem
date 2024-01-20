@@ -1,7 +1,6 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const User = require('../models/userModel');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
@@ -22,10 +21,10 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
   res
     .status(200)
-    .set(
-      'Content-Security-Policy',
-      'connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com http://127.0.0.1:3000/api/v1/users/logout ',
-    )
+    // .set(
+    //   'Content-Security-Policy',
+    //   'connect-src https://*.tiles.mapbox.com https://*.mapbox.com http://127.0.0.1:3000/api/v1/users/logout ',
+    // )
     .render('tour', {
       title: `${tour.name} Tour`,
       tour,
@@ -43,3 +42,4 @@ exports.getAccount = (req, res) => {
     title: 'Your Account',
   });
 };
+// https://api.mapbox.com https://events.mapbox.com

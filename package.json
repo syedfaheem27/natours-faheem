@@ -22,6 +22,7 @@
   "homepage": "https://github.com/syedfaheem27/natours-faheem#readme",
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
+    "@stripe/stripe-js": "^2.3.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
