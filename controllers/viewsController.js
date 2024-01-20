@@ -19,16 +19,10 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
   if (!tour) return next(new AppError('There is no tour with that name', 404));
 
-  res
-    .status(200)
-    // .set(
-    //   'Content-Security-Policy',
-    //   'connect-src https://*.tiles.mapbox.com https://*.mapbox.com http://127.0.0.1:3000/api/v1/users/logout ',
-    // )
-    .render('tour', {
-      title: `${tour.name} Tour`,
-      tour,
-    });
+  res.status(200).render('tour', {
+    title: `${tour.name} Tour`,
+    tour,
+  });
 });
 
 exports.getLoginForm = (req, res) => {
@@ -42,4 +36,3 @@ exports.getAccount = (req, res) => {
     title: 'Your Account',
   });
 };
-// https://api.mapbox.com https://events.mapbox.com

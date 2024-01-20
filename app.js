@@ -30,7 +30,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //set security headers
 
-//It doesn't let you add resources from other origins
 app.use(
   helmet({
     contentSecurityPolicy: {
