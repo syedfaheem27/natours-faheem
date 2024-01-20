@@ -27,6 +27,10 @@ const bookingSchema = new mongoose.Schema({
 //can't do a virtual populate here as the tour doesn't know about it's bookings
 
 bookingSchema.pre(/^find/, function (next) {
+  //Approach 1
+  //   this.populate('user').populate('tour');
+
+  //Approach 2
   this.populate('user').populate({
     path: 'tour',
     select: 'name',
