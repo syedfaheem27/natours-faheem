@@ -81,7 +81,6 @@ if (photo_input) {
 
     reader.addEventListener('load', () => {
       image_el.setAttribute('src', reader.result);
-      image_header.setAttribute('src', reader.result);
     });
 
     reader.readAsDataURL(imgFile);
