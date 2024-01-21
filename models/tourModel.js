@@ -178,14 +178,14 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(
-    `The time it took to execute the query is ${
-      Date.now() - this.startTime
-    } milliseconds`,
-  );
-  next();
-});
+// tourSchema.post(/^find/, function (docs, next) {
+//   console.log(
+//     `The time it took to execute the query is ${
+//       Date.now() - this.startTime
+//     } milliseconds`,
+//   );
+//   next();
+// });
 
 //Disabling this pre aggregate hook so that
 //$geoNear(aggregate) works as it needs to be the first one

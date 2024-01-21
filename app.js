@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -108,6 +109,9 @@ app.use(
 
 //limit requests from the same IP
 app.use('/api', limiter);
+
+//Compresses the response texts
+app.use(compression());
 
 //ROUTES
 app.use('/', viewsRouter);

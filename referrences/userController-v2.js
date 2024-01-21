@@ -61,9 +61,6 @@ exports.createUser = (req, res) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.file);
-
   //1. Check if there is any data related to password
   if (req.body.password || req.body.passwordConfirm)
     return next(
