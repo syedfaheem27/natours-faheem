@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -25,6 +26,13 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 //GLOBAL MIDDLEWARES
+
+//Adding CORS
+//Not sufficient for non simple requests like PUT,PATCH,DELETE
+app.use(cors());
+
+//For non simple requests, you need to configure a preflight request
+app.options('*', cors());
 
 //serving static files
 app.use(express.static(path.join(__dirname, 'public')));

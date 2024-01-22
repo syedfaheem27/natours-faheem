@@ -12,6 +12,7 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const map_section = document.getElementById('map');
 const logOut_btn = document.querySelector('.nav__el--logout');
+const logIn_btn = document.getElementById('btn--login');
 const btnSavePassword = document.querySelector('.btn--save-password');
 const btnBooking = document.getElementById('book-tour');
 
@@ -23,10 +24,13 @@ if (map_section) {
 if (loginForm)
   loginForm.addEventListener('submit', async e => {
     e.preventDefault();
+    logIn_btn.textContent = 'Logging In ...';
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
     await logIn(email, password);
+
+    logIn_btn.textContent = 'Login';
   });
 
 if (logOut_btn) logOut_btn.addEventListener('click', logOut);
