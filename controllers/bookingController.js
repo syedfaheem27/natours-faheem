@@ -13,7 +13,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const product = await stripe.products.create({
     name: `${tour.name} Tour`,
     description: tour.summary,
-    images: [`${req.protocol}://${req.get('host')}/${tour.imageCover}`],
+    images: [`/img/tours/${tour.imageCover}`],
   });
 
   const price = await stripe.prices.create({
@@ -56,6 +56,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
 exports.createBookingCheckout = async session => {
   console.log('session');
+  console.log(session);
 };
 
 exports.webhookCheckout = (req, res, next) => {
@@ -69,7 +70,7 @@ exports.webhookCheckout = (req, res, next) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
-    return response.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
