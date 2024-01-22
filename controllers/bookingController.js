@@ -13,7 +13,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const product = await stripe.products.create({
     name: `${tour.name} Tour`,
     description: tour.summary,
-    images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
+    images: [`${req.protocol}://${req.get('host')}/${tour.imageCover}`],
   });
 
   const price = await stripe.prices.create({
@@ -59,12 +59,12 @@ exports.createBookingCheckout = async session => {
 };
 
 exports.webhookCheckout = (req, res, next) => {
-  const signature = request.headers['stripe-signature'];
+  const signature = req.headers['stripe-signature'];
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
-      request.body,
+      req.body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
     );
