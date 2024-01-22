@@ -46,17 +46,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.createBookingCheckout = catchAsync(async (req, res, next) => {
-//   const { tour, user, price } = req.query;
-
-//   if (!tour || !user || !price) return next();
-
-//   await Booking.create({ user, tour, price });
-
-//   res.redirect(req.originalUrl.split('?')[0]);
-// });
-
-exports.createBookingCheckout = async session => {
+const createBookingCheckout = async session => {
   console.log('session');
   console.log(session);
 };
