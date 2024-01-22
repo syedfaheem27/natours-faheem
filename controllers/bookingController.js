@@ -24,9 +24,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${
-      req.params.tourId
-    }&user=${req.user.id}&price=${tour.price}`,
+    success_url: `${req.protocol}://${req.get('host')}/my-bookings`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourID,
@@ -46,33 +44,41 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
-//Temporary solution to create a booking on a successfull payment without a stripe webhook
-//Unsafe as anyone who knows the structure of the success request can create a booking without a payment
+// exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+//   const { tour, user, price } = req.query;
 
-//1. Pass the userId,tourId and the price as query params in the success url.
+//   if (!tour || !user || !price) return next();
 
-//2. Add a middleware in the review route for the GET request on the root path(/)
-// as we are loading the review page after a successfull payment
+//   await Booking.create({ user, tour, price });
 
-//3. If there's no userId or no tourId or no Price, go to the next middleware
+//   res.redirect(req.originalUrl.split('?')[0]);
+// });
 
-//4. Otherwise, create a booking in the DB and then if we just go to the next middleware
-// which is the isLoggedIn and the getOverview, the overview oage will be loaded but the url
-//will have the tourId,userId and the price as query params which is  not safe.
+exports.createBookingCheckout = async session => {
+  console.log('session');
+};
 
-//5. To overcome this, after creating a booking, we will redirect to the root path (/)
-//and since there won't be any tourId,userId or price, it will go to the next middleware and
-//the overview page will load without these query params
+exports.webhookCheckout = (req, res, next) => {
+  const signature = request.headers['stripe-signature'];
+  let event;
 
-exports.createBookingCheckout = catchAsync(async (req, res, next) => {
-  const { tour, user, price } = req.query;
+  try {
+    event = stripe.webhooks.constructEvent(
+      request.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET,
+    );
+  } catch (err) {
+    return response.status(400).send(`Webhook Error: ${err.message}`);
+  }
 
-  if (!tour || !user || !price) return next();
+  if (event.type === 'checkout.session.completed') {
+    const checkoutSessionCompleted = event.data.object;
+    createBookingCheckout(checkoutSessionCompleted);
+  }
 
-  await Booking.create({ user, tour, price });
-
-  res.redirect(req.originalUrl.split('?')[0]);
-});
+  res.status(200).json({ recieved: true });
+};
 
 exports.createBooking = handleFactory.createOne(Booking);
 exports.getAllBookings = handleFactory.getAll(Booking);

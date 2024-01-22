@@ -15,6 +15,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewsRouter = require('./routes/viewsRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -85,6 +86,13 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'Too many api requests. Try again after one hour.',
 });
+
+//Setting the route for webhook - after payment is done, stripe will call this endpoint
+app.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout,
+);
 
 //Body parser and setting the limit on the body size
 app.use(express.json({ limit: '10kb' }));
