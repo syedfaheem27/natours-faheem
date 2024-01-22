@@ -6,6 +6,7 @@ import { logIn, logOut } from './login';
 import { renderMap } from './mapbox';
 import { updateUserSettings } from './updateUserSettings';
 import { loadCheckoutForm } from './stripe';
+import { showAlert } from './alerts';
 
 const loginForm = document.querySelector('.form--login');
 const userDataForm = document.querySelector('.form-user-data');
@@ -101,3 +102,7 @@ if (btnBooking)
 
     await loadCheckoutForm(tourId);
   });
+
+//Showing alerts
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 15);
