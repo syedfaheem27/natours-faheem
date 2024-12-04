@@ -1,3 +1,7 @@
+const catchAsync = require("../utils/catchAsync");
+const Review = require("../models/review.model");
+const AppError = require("../utils/appError");
+
 exports.addTourUserIds = (req, res, next) => {
   const filter = {};
 
@@ -23,3 +27,19 @@ exports.addTourUserBody = (req, res, next) => {
 
   next();
 };
+
+exports.preventDuplicateReviews = catchAsync(async (req, res, next) => {
+  const review = await Review.findOne({
+    tour: req.body.tour,
+    user: req.body.user,
+  });
+
+  if (!review) return next();
+
+  next(
+    new AppError(
+      "There is a review already for this tour from the same user. Try updating the review.",
+      400,
+    ),
+  );
+});
