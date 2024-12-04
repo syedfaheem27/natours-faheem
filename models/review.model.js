@@ -57,16 +57,44 @@ reviewSchema.pre(/^find/, function (next) {
 //two approaches to update the numRatings and avgRatings on tour
 
 //approach 1 - directly manipulate the tour - better than aggregation in case of large collections
-reviewSchema.post("save", async function (doc, next) {
-  const tourId = doc.tour;
-  const tour = await Tour.findById(tourId);
-  const newAverage =
-    (tour.ratingsAverage * tour.ratingsQuantity + doc.rating) /
-    (tour.ratingsQuantity + 1);
+// reviewSchema.post("save", async function (doc, next) {
+//   const tourId = doc.tour;
+//   const tour = await Tour.findById(tourId);
+//   const newAverage =
+//     (tour.ratingsAverage * tour.ratingsQuantity + doc.rating) /
+//     (tour.ratingsQuantity + 1);
 
-  tour.ratingsAverage = newAverage;
-  tour.ratingsQuantity += 1;
-  await tour.save();
+//   tour.ratingsAverage = newAverage;
+//   tour.ratingsQuantity += 1;
+//   await tour.save();
+// });
+
+//approach 2 - make use of aggregation pipeline
+reviewSchema.statics.calcAverageRating = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: {
+        tour: tourId,
+      },
+    },
+    {
+      $group: {
+        _id: "$tour",
+        numRating: { $sum: 1 },
+        avgRating: { $avg: "$rating" },
+      },
+    },
+  ]);
+
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsAverage: stats[0].avgRating,
+    ratingsQuantity: stats[0].numRating,
+  });
+};
+
+reviewSchema.post("save", async function (doc, next) {
+  await doc.constructor.calcAverageRating(doc.tour);
+  next();
 });
 
 const reviewModel = mongoose.model("Review", reviewSchema);
