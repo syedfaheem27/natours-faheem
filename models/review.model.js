@@ -87,12 +87,23 @@ reviewSchema.statics.calcAverageRating = async function (tourId) {
   ]);
 
   await Tour.findByIdAndUpdate(tourId, {
-    ratingsAverage: stats[0].avgRating,
-    ratingsQuantity: stats[0].numRating,
+    ratingsAverage: stats[0]?.avgRating ?? 4.5,
+    ratingsQuantity: stats[0]?.numRating ?? 0,
   });
 };
 
 reviewSchema.post("save", async function (doc, next) {
+  await doc.constructor.calcAverageRating(doc.tour);
+  next();
+});
+
+//approach 2 - when a review is updated or deleted,
+//the corresponding tour should be updated accordingly
+
+reviewSchema.post(/^findOneAnd/, async function (doc, next) {
+  //This hook will be executed even if the review isn't found with the reviewId provided
+  //and as such doc will be null which will result in an error.
+  if (!doc) return next();
   await doc.constructor.calcAverageRating(doc.tour);
   next();
 });
