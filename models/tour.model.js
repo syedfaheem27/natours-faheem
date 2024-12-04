@@ -122,6 +122,9 @@ const tourSchema = new mongoose.Schema(
   },
 );
 
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
@@ -152,6 +155,8 @@ tourSchema.pre(/^find/, function (next) {
     select: "-__v -passwordChangedAt",
   });
 
+  // this.explain();
+
   next();
 });
 
@@ -163,6 +168,7 @@ tourSchema.pre(/^find/, function (next) {
 
 tourSchema.post(/^find/, function (_, next) {
   console.log(`The query took ${Date.now() - this.start} milliseconds`);
+
   next();
 });
 
