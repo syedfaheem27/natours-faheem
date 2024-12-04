@@ -1,0 +1,115 @@
+const Tour = require("../models/tour.model");
+const catchAsync = require("../utils/catchAsync");
+const {
+  deleteOne,
+  updateOne,
+  getOne,
+  getAll,
+  createOne,
+} = require("./handler.factory");
+
+// const AppError = require("../utils/appError");
+
+exports.getTourStats = catchAsync(async (req, res) => {
+  const stats = await Tour.aggregate([
+    // {
+    //   $match: {
+    //     ratingsAverage: { $gte: 4.5 },
+    //   },
+    // },
+    {
+      $group: {
+        _id: { $toUpper: "$difficulty" },
+        numTours: { $sum: 1 },
+        numRatings: { $sum: "$ratingsQuantity" },
+        avgRating: { $avg: "$ratingsAverage" },
+        avgPrice: { $avg: "$price" },
+        minPrice: { $min: "$price" },
+        maxPrice: { $max: "$price" },
+      },
+    },
+    {
+      $sort: { avgRating: -1 },
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    results: stats.length,
+    data: {
+      stats,
+    },
+  });
+});
+
+exports.getMonthlyTourPlan = catchAsync(async (req, res, next) => {
+  const year = req.params.year * 1;
+  const plan = await Tour.aggregate([
+    {
+      $unwind: "$startDates",
+    },
+    {
+      $addFields: {
+        startDate: "$startDates",
+      },
+    },
+    {
+      $project: {
+        startDates: 0,
+      },
+    },
+    {
+      $match: {
+        startDate: {
+          $gte: new Date(`${year}-01-01`),
+          $lte: new Date(`${year}-12-31`),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: "$startDate" },
+        numTours: { $sum: 1 },
+        tourNames: {
+          $push: "$name",
+        },
+      },
+    },
+    {
+      $addFields: {
+        month: "$_id",
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+      },
+    },
+    {
+      $sort: {
+        numTours: -1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    results: plan.length,
+    data: {
+      plan,
+    },
+  });
+});
+
+//restricted to admin,guide and lead-guide
+exports.addTour = createOne(Tour);
+
+exports.getTour = getOne(Tour, [
+  {
+    path: "reviews",
+  },
+]);
+
+exports.getAllTours = getAll(Tour);
+exports.updateTour = updateOne(Tour);
+exports.deleteTour = deleteOne(Tour);
