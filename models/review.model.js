@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const Tour = require("./tour.model");
+
 const reviewSchema = new mongoose.Schema(
   {
     review: {
@@ -50,6 +52,21 @@ reviewSchema.pre(/^find/, function (next) {
   //   select: "name ",
   // });
   next();
+});
+
+//two approaches to update the numRatings and avgRatings on tour
+
+//approach 1 - directly manipulate the tour - better than aggregation in case of large collections
+reviewSchema.post("save", async function (doc, next) {
+  const tourId = doc.tour;
+  const tour = await Tour.findById(tourId);
+  const newAverage =
+    (tour.ratingsAverage * tour.ratingsQuantity + doc.rating) /
+    (tour.ratingsQuantity + 1);
+
+  tour.ratingsAverage = newAverage;
+  tour.ratingsQuantity += 1;
+  await tour.save();
 });
 
 const reviewModel = mongoose.model("Review", reviewSchema);

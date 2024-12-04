@@ -20,6 +20,7 @@
     "import/no-extraneous-dependencies": "warn",
     "prefer-object-spread": "warn",
     "no-restricted-syntax": "warn",
-    "no-useless-escape": "warn"
+    "no-useless-escape": "warn",
+    "prefer-arrow-callback": "off"
   }
 }
