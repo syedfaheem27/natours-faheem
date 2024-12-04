@@ -36,6 +36,8 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 // reviewSchema.post(/^find/, function (doc, next) {
 //   console.log(doc.constructor);
 //   next();

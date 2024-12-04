@@ -28,18 +28,21 @@ exports.addTourUserBody = (req, res, next) => {
   next();
 };
 
-exports.preventDuplicateReviews = catchAsync(async (req, res, next) => {
-  const review = await Review.findOne({
-    tour: req.body.tour,
-    user: req.body.user,
-  });
+//Approach 1 to prevent duplicate reviews
+//Approach 2 - make use of an index
 
-  if (!review) return next();
+// exports.preventDuplicateReviews = catchAsync(async (req, res, next) => {
+//   const review = await Review.findOne({
+//     tour: req.body.tour,
+//     user: req.body.user,
+//   });
 
-  next(
-    new AppError(
-      "There is a review already for this tour from the same user. Try updating the review.",
-      400,
-    ),
-  );
-});
+//   if (!review) return next();
+
+//   next(
+//     new AppError(
+//       "There is a review already for this tour from the same user. Try updating the review.",
+//       400,
+//     ),
+//   );
+// });
