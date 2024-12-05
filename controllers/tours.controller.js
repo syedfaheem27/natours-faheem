@@ -160,6 +160,7 @@ exports.getTourDistances = catchAsync(async (req, res, next) => {
       $project: {
         distance: 1,
         name: 1,
+        startLocation: 1,
       },
     },
   ]);
