@@ -131,6 +131,47 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
   });
 });
 
+///center/:latlng/unit/:unit"
+exports.getTourDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(",");
+
+  if (!lat || !lng)
+    return next(
+      new AppError(
+        "Please provide the lat and lng in the format - /center/:latlng/unit/:unit",
+        400,
+      ),
+    );
+
+  const multiplier = unit === "mi" ? 0.000621371 : 0.001;
+
+  const tourDistances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: { type: "Point", coordinates: [lng * 1, lat * 1] },
+        distanceField: "distance",
+        distanceMultiplier: multiplier,
+        // includeLocs: "dist.location",
+        spherical: true,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      data: tourDistances,
+    },
+  });
+});
+
 //restricted to admin,guide and lead-guide
 exports.addTour = createOne(Tour);
 
