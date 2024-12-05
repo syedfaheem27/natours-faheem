@@ -8,6 +8,7 @@ const {
   // checkId,
   getMonthlyTourPlan,
   getTourStats,
+  getToursWithin,
 } = require("../controllers/tours.controller");
 
 const reviewRouter = require("./review.router");
@@ -30,6 +31,9 @@ router.use("/:tourId/reviews", reviewRouter);
 router.route("/top-5-cheap").get(top5Cheap, getAllTours);
 router.route("/tour-stats").get(getTourStats);
 router.route("/monthly-plan/:year").get(protect, getMonthlyTourPlan);
+router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(getToursWithin);
 
 router.route("/").get(getAllTours).post(
   protect,
