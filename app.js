@@ -1,3 +1,5 @@
+const path = require("path");
+
 const express = require("express");
 
 const morgan = require("morgan");
@@ -14,6 +16,10 @@ const errorHandler = require("./controllers/error.controller");
 const AppError = require("./utils/appError");
 
 const app = express();
+
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 15 minutes
@@ -51,8 +57,12 @@ app.use((req, res, next) => {
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
-app.use(express.static(`${__dirname}/public`));
+//View Routes
+app.get("/", (req, res) => {
+  res.status(200).render("base");
+});
 
+//API Routes
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
