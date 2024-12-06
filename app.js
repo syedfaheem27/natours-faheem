@@ -19,6 +19,7 @@ const app = express();
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
+
 app.use(express.static(path.join(__dirname, "public")));
 
 const limiter = rateLimit({
@@ -59,7 +60,10 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 //View Routes
 app.get("/", (req, res) => {
-  res.status(200).render("base");
+  res.status(200).render("base", {
+    tour: "The Dummy Tour",
+    user: "Faheem",
+  });
 });
 
 //API Routes
