@@ -59,7 +59,7 @@ exports.getOne = (Model, popOptionsArr) =>
   });
 
 exports.getAll = (Model, initialFilter) =>
-  catchAsync(async (req, res) => {
+  catchAsync(async (req, res, next) => {
     console.log(initialFilter);
     let initQuery;
     if (initialFilter) initQuery = Model.find(initialFilter);

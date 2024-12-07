@@ -1,6 +1,6 @@
-const catchAsync = require("../utils/catchAsync");
-const Review = require("../models/review.model");
-const AppError = require("../utils/appError");
+// const catchAsync = require("../utils/catchAsync");
+// const Review = require("../models/review.model");
+// const AppError = require("../utils/appError");
 
 exports.addTourUserIds = (req, res, next) => {
   const filter = {};
@@ -12,7 +12,7 @@ exports.addTourUserIds = (req, res, next) => {
     if (!req.params.tourId) filter.tour = req.body.tour;
     else filter.tour = req.params.tourId;
 
-    if (!req.body.user) filter.user = req.user._id;
+    if (!req.body.user) filter.user = req.user.id;
     else filter.user = req.body.user;
 
     req.reviewFilter = filter;

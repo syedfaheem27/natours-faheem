@@ -1,11 +1,14 @@
 const express = require("express");
 
-const { getOverview, getTour } = require("../controllers/view.controller");
+const {
+  getOverview,
+  getTourDetail,
+} = require("../controllers/view.controller");
 
 const router = express.Router();
 
 router.get("/", getOverview);
 
-router.get("/tour", getTour);
+router.get("/tour/:slug", getTourDetail);
 
 module.exports = router;
