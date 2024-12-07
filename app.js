@@ -11,6 +11,7 @@ const hpp = require("hpp");
 const tourRouter = require("./router/tour.router");
 const userRouter = require("./router/user.router");
 const reviewRouter = require("./router/review.router");
+const viewRouter = require("./router/view.router");
 
 const errorHandler = require("./controllers/error.controller");
 const AppError = require("./utils/appError");
@@ -58,29 +59,13 @@ app.use((req, res, next) => {
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
-//View Routes
-app.get("/", (req, res) => {
-  res.status(200).render("base", {
-    tour: "The Dummy Tour",
-  });
-});
-
-app.get("/overview", (req, res) => {
-  res.status(200).render("overview", {
-    title: "All Tours",
-  });
-});
-
-app.get("/tour", (req, res) => {
-  res.status(200).render("tour", {
-    title: "The Forest Hiker",
-  });
-});
-
 //API Routes
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+
+//View Routes
+app.use("/", viewRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl}`));
