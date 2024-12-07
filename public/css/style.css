@@ -32,7 +32,7 @@ body {
   font-weight: 300;
   font-family: "Lato", sans-serif;
   color: #777;
-  padding: 3rem;
+  padding: 1rem;
   min-height: 100vh;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1324,4 +1324,10 @@ body {
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
+}
+
+@media (min-width: 1440px) {
+  body {
+    padding: 3rem;
+  }
 }
