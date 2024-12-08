@@ -2,16 +2,29 @@
 
 import { hideAlert, showAlert } from "./alert";
 import { login } from "./login";
+import { logout } from "./logout";
+import { loadMap } from "./mapbox";
 import { signUp } from "./signup";
 
 const loginBtn = document.getElementById("login");
+const signUpBtn = document.getElementById("sign-up");
+const logoutBtn = document.getElementById("logout");
 
+const loginForm = document.querySelector(".login-form");
+const signUpForm = document.querySelector(".signup-form");
+
+const mapContainer = document.getElementById("map");
+
+if (mapContainer) {
+  const locations = JSON.parse(mapContainer.dataset.locations);
+  loadMap(locations);
+}
+
+// LOGIN
 if (loginBtn)
   loginBtn.addEventListener("click", () => {
     location.assign("/login");
   });
-
-const loginForm = document.querySelector(".login-form");
 
 if (loginForm) {
   loginForm.addEventListener("submit", async e => {
@@ -33,14 +46,11 @@ if (loginForm) {
   });
 }
 
-const signUpBtn = document.getElementById("sign-up");
-
+// SIGN UP
 if (signUpBtn)
   signUpBtn.addEventListener("click", () => {
     location.assign("/signup");
   });
-
-const signUpForm = document.querySelector(".signup-form");
 
 if (signUpForm) {
   signUpForm.addEventListener("submit", async e => {
@@ -63,3 +73,6 @@ if (signUpForm) {
     }
   });
 }
+
+//LOGOUT
+if (logoutBtn) logoutBtn.addEventListener("click", logout);

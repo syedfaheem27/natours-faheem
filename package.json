@@ -2,12 +2,12 @@
   "name": "natours-prac",
   "version": "1.0.0",
   "description": "Node js practice through building",
-  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "node inspect server.js",
-    "watch": "parcel ./public/js/index.js --dist-dir ./public/js/bundle"
+    "watch": "parcel ./public/js/index.js --dist-dir ./public/js/bundle",
+    "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundle"
   },
   "author": "Syed Faheem",
   "license": "ISC",
@@ -46,5 +46,6 @@
   },
   "engines": {
     "node": ">=10.0"
-  }
+  },
+  "browserlist": "> 0.5%, last 2 versions, not dead"
 }

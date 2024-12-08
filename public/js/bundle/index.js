@@ -598,12 +598,23 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 },{}],"f2QDv":[function(require,module,exports,__globalThis) {
 /*eslint-disable*/ var _alert = require("./alert");
 var _login = require("./login");
+var _logout = require("./logout");
+var _mapbox = require("./mapbox");
 var _signup = require("./signup");
 const loginBtn = document.getElementById("login");
+const signUpBtn = document.getElementById("sign-up");
+const logoutBtn = document.getElementById("logout");
+const loginForm = document.querySelector(".login-form");
+const signUpForm = document.querySelector(".signup-form");
+const mapContainer = document.getElementById("map");
+if (mapContainer) {
+    const locations = JSON.parse(mapContainer.dataset.locations);
+    (0, _mapbox.loadMap)(locations);
+}
+// LOGIN
 if (loginBtn) loginBtn.addEventListener("click", ()=>{
     location.assign("/login");
 });
-const loginForm = document.querySelector(".login-form");
 if (loginForm) loginForm.addEventListener("submit", async (e)=>{
     try {
         e.preventDefault();
@@ -620,11 +631,10 @@ if (loginForm) loginForm.addEventListener("submit", async (e)=>{
         }, 1500);
     }
 });
-const signUpBtn = document.getElementById("sign-up");
+// SIGN UP
 if (signUpBtn) signUpBtn.addEventListener("click", ()=>{
     location.assign("/signup");
 });
-const signUpForm = document.querySelector(".signup-form");
 if (signUpForm) signUpForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -643,8 +653,55 @@ if (signUpForm) signUpForm.addEventListener("submit", async (e)=>{
         }, 1500);
     }
 });
+//LOGOUT
+if (logoutBtn) logoutBtn.addEventListener("click", (0, _logout.logout));
 
-},{"./login":"7yHem","./signup":"fNY2o","./alert":"kxdiQ"}],"7yHem":[function(require,module,exports,__globalThis) {
+},{"./alert":"kxdiQ","./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz"}],"kxdiQ":[function(require,module,exports,__globalThis) {
+/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
+parcelHelpers.export(exports, "showAlert", ()=>showAlert);
+const hideAlert = ()=>{
+    const el = document.querySelector(".alert");
+    if (el) el.parentElement.removeChild(el);
+};
+const showAlert = (type, msg)=>{
+    hideAlert();
+    const markup = `<div class='alert alert--${type}'>${msg}</div>`;
+    document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"7yHem":[function(require,module,exports,__globalThis) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
@@ -673,7 +730,7 @@ const login = async (email, password)=>{
     }
 };
 
-},{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./alert":"kxdiQ"}],"jo6P5":[function(require,module,exports,__globalThis) {
+},{"axios":"jo6P5","./alert":"kxdiQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jo6P5":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>(0, _axiosJsDefault.default));
@@ -1528,37 +1585,7 @@ function bind(fn, thisArg) {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"cpqD8":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cpqD8":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _utilsJs = require("./../utils.js");
@@ -5618,21 +5645,6 @@ Object.entries(HttpStatusCode).forEach(([key, value])=>{
 });
 exports.default = HttpStatusCode;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kxdiQ":[function(require,module,exports,__globalThis) {
-/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
-parcelHelpers.export(exports, "showAlert", ()=>showAlert);
-const hideAlert = ()=>{
-    const el = document.querySelector(".alert");
-    if (el) el.parentElement.removeChild(el);
-};
-const showAlert = (type, msg)=>{
-    hideAlert();
-    const markup = `<div class='alert alert--${type}'>${msg}</div>`;
-    document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
-};
-
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fNY2o":[function(require,module,exports,__globalThis) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -5665,6 +5677,69 @@ const signUp = async (name, email, password, confirmPassword)=>{
     }
 };
 
-},{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./alert":"kxdiQ"}]},["5A6b5","f2QDv"], "f2QDv", "parcelRequire94c2")
+},{"axios":"jo6P5","./alert":"kxdiQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1ftRF":[function(require,module,exports,__globalThis) {
+/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "logout", ()=>logout);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _alert = require("./alert");
+const logout = async ()=>{
+    try {
+        const res = await (0, _axiosDefault.default)({
+            method: "GET",
+            url: "/logout"
+        });
+        if (res.data.status === "success") {
+            (0, _alert.showAlert)("success", "Successfully logged out");
+            setTimeout(()=>location.reload(true), 300);
+        }
+    } catch (err) {
+        (0, _alert.showAlert)("error", "Something went wrong while logging you out.");
+        setTimeout(()=>{
+            (0, _alert.hideAlert)();
+        }, 1500);
+    }
+};
+
+},{"axios":"jo6P5","./alert":"kxdiQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3zDlz":[function(require,module,exports,__globalThis) {
+/* eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "loadMap", ()=>loadMap);
+const loadMap = (locations)=>{
+    mapboxgl.accessToken = "pk.eyJ1IjoiZmFoZWVtLTI3MTkiLCJhIjoiY200Zjk3ZXZkMHprbjJqcXE3eHBuam92dSJ9.eZqB0p4ijRGo49Pm0sSaag";
+    const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/faheem-2719/clr8x02zu002f01qn3gstflnm",
+        projection: "mercator"
+    });
+    const bounds = new mapboxgl.LngLatBounds();
+    //disable scroll zooming
+    map.scrollZoom.disable();
+    locations.forEach((loc)=>{
+        const el = document.createElement("div");
+        el.className = "marker";
+        new mapboxgl.Marker({
+            element: el,
+            anchor: "bottom"
+        }).setLngLat(loc.coordinates).addTo(map);
+        // Add popup
+        new mapboxgl.Popup({
+            offset: 30
+        }).setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}:&nbsp;${loc.description}</p>`).addTo(map);
+        // Extend map bounds to include current location
+        bounds.extend(loc.coordinates);
+    });
+    map.fitBounds(bounds, {
+        padding: {
+            top: 200,
+            bottom: 150,
+            left: 100,
+            right: 100
+        }
+    });
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["5A6b5","f2QDv"], "f2QDv", "parcelRequire94c2")
 
 //# sourceMappingURL=index.js.map

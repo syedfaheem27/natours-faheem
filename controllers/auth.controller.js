@@ -53,7 +53,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (req.headers?.authorization?.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies?.jwt) {
+  } else if (req.cookieswatch?.jwt) {
     token = req.cookies.jwt;
   }
 
@@ -95,29 +95,47 @@ exports.protect = catchAsync(async (req, res, next) => {
 //This is for the pages rendered in the browser - to protect them
 //Here the idea is not to throw an error and incase the user is not logged in
 // just render the overview page without the user data
-exports.isLoggedIn = exports.protect = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies?.jwt) {
-    //check if token is valid
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET,
-    );
+    try {
+      //check if token is valid
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
 
-    //check if there's a user with this token
-    const user = await User.findById(decoded.id).select("+password");
+      //check if there's a user with this token
+      const user = await User.findById(decoded.id).select("+password");
 
-    if (!user) return next();
+      if (!user) return next();
 
-    //check if the user hasn't changed password after the token was issued
-    if (user.hasChangedPasswordAfter(decoded.iat)) return next();
+      //check if the user hasn't changed password after the token was issued
+      if (user.hasChangedPasswordAfter(decoded.iat)) return next();
 
-    //making the user object accessible to the pug templates
-    res.locals.user = user;
-    return next();
+      //making the user object accessible to the pug templates
+      res.locals.user = user;
+      return next();
+    } catch (err) {
+      console.log(err);
+      return next();
+    }
   }
 
   next();
-});
+};
+
+//logging out users from the website
+exports.logOut = (req, res) => {
+  console.log(req);
+  res.cookie("jwt", "loggedOut", {
+    expires: new Date(Date.now() + 10 * 1000),
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "Successfully logged out",
+  });
+};
 
 exports.restrictTo =
   (...roles) =>
