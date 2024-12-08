@@ -6,7 +6,10 @@ const handleCastErrorDB = err => {
 };
 
 const handleDuplicateErrorDB = err => {
-  const errMsg = `An entry with the same value found : ${err.errorResponse.keyValue.name}`;
+  const errObj = err.errorResponse.keyValue;
+  let key = Object.keys(errObj)[0];
+
+  const errMsg = `An entry with the same value found : ${key}`;
   return new AppError(errMsg, 400);
 };
 

@@ -7,6 +7,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 
 const tourRouter = require("./router/tour.router");
 const userRouter = require("./router/user.router");
@@ -31,10 +32,45 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'", "data:", "blob:", "https:", "ws:"],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", "https:", "data:"],
+        scriptSrc: [
+          "'self'",
+          "https:",
+          "http:",
+          "blob:",
+          "https://*.mapbox.com",
+          "https://js.stripe.com",
+          "https://*.cloudflare.com",
+        ],
+        frameSrc: ["'self'", "https://js.stripe.com"],
+        // objectSrc: ["none"],
+        styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+        workerSrc: ["'self'", "data:", "blob:"],
+        childSrc: ["'self'", "blob:"],
+        imgSrc: ["'self'", "data:", "blob:"],
+        connectSrc: [
+          "'self'",
+          "blob:",
+          "wss:",
+          "https://*.tiles.mapbox.com",
+          "https://api.mapbox.com",
+          "https://events.mapbox.com",
+        ],
+        upgradeInsecureRequests: [],
+      },
+    },
+  }),
+);
 
 //parsing request body
 app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser());
 
 app.use(mongoSanitize());
 
@@ -54,6 +90,7 @@ app.use(
 //Adding request time to the request
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString;
+  console.log(req.cookies);
   next();
 });
 

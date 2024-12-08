@@ -17,14 +17,16 @@ exports.getTourDetail = catchAsync(async (req, res, next) => {
     select: "review rating user",
   });
 
-  res
-    .status(200)
-    .set(
-      "Content-Security-Policy",
-      "connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com",
-    )
-    .render("tour", {
-      title: `${tour.name} Tour`,
-      tour,
-    });
+  res.status(200).render("tour", {
+    title: `${tour.name} Tour`,
+    tour,
+  });
 });
+
+exports.getLoginPage = (req, res) => {
+  res.status(200).render("login");
+};
+
+exports.getSignUpPage = (req, res) => {
+  res.status(200).render("signup");
+};

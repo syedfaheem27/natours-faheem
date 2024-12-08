@@ -1,0 +1,21 @@
+extends base
+
+block content
+    main.main
+        .signup-form
+            h2.heading-secondary.ma-bt-lg Sign up
+            form.form
+                .form__group
+                    label.form__label(for='name') User Name
+                    input#name.form__input(type='text',name='name', placeholder='userName',autoComplete='name', required)
+                .form__group
+                    label.form__label(for='email') Email address
+                    input#email.form__input(type='email',name='email', placeholder='you@example.com',autoComplete='email', required)
+                .form__group.ma-bt-md
+                    label.form__label(for='password') Password
+                    input#password.form__input(type='password',name='password',autoComplete='current-password' placeholder='••••••••', required, minlength='8')
+                .form__group.ma-bt-md
+                    label.form__label(for='password-confirm') Confirm Password
+                    input.form__input(type='password',name='password-confirm', placeholder='••••••••',autoComplete='new-password', required, minlength='8' id='password-confirm')
+                .form__group
+                    button.btn.btn--green Sign Up
