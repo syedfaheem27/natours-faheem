@@ -90,7 +90,6 @@ app.use(
 //Adding request time to the request
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString;
-  // console.log(req.cookies);
   next();
 });
 
