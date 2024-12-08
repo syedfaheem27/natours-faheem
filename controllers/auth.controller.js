@@ -23,7 +23,13 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
   const user = await User.create(body);
 
-  createSendToken(res, user);
+  //Don't send a token upon signup
+  // createSendToken(res, user);
+
+  res.status(201).json({
+    status: "success",
+    message: "Successfully signed in",
+  });
 });
 
 exports.logIn = catchAsync(async (req, res, next) => {

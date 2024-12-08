@@ -4,7 +4,6 @@ const signUpBtn = document.getElementById("sign-up");
 
 if (signUpBtn)
   signUpBtn.addEventListener("click", () => {
-    console.log("Hello from SingUp");
     location.assign("/signup");
   });
 
@@ -23,7 +22,13 @@ const signUp = async (name, email, password, confirmPassword) => {
       },
     });
 
-    console.log(res.data.data);
+    console.log(res);
+    if (res.data.status === "success") {
+      alert("Signed up sucessfully");
+      setTimeout(() => {
+        location.replace("/login");
+      }, 1500);
+    }
   } catch (err) {
     throw err;
   }
@@ -41,6 +46,7 @@ if (signUpForm) {
     try {
       await signUp(name, email, password, confrimPassword);
     } catch (err) {
+      alert(JSON.stringify(err.response.data));
       console.log(err.response.data);
     }
   });
