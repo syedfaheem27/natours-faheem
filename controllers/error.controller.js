@@ -49,12 +49,12 @@ const sendErrorProd = (err, res) => {
 };
 
 module.exports = (err, req, res, next) => {
-  err.stathandleCastErrorsDBus = err.status || "fail";
+  // err.stathandleCastErrorsDBus = err.status || "fail";
   err.statusCode = err.statusCode || 500;
 
   if (process.env.NODE_ENV === "development") sendErrorDev(err, res);
   else if (process.env.NODE_ENV === "production") {
-    let error = { ...err };
+    let error = err;
     if (err.name === "CastError") error = handleCastErrorDB(error);
     if (err?.errorResponse?.errmsg?.includes("duplicate key"))
       error = handleDuplicateErrorDB(error);

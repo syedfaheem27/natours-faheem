@@ -2,10 +2,11 @@
 
 const signUpBtn = document.getElementById("sign-up");
 
-signUpBtn.addEventListener("click", () => {
-  console.log("Hello from SingUp");
-  location.assign("/signup");
-});
+if (signUpBtn)
+  signUpBtn.addEventListener("click", () => {
+    console.log("Hello from SingUp");
+    location.assign("/signup");
+  });
 
 const signUpForm = document.querySelector(".signup-form");
 

@@ -7,7 +7,7 @@ header.header
         if(user)
             a.nav__el(href='#') Log out
             a.nav__el(href='#')
-                img.nav__user-img(src=`/img/users/${user.photo}`)(alt= `${username}`)
+                img.nav__user-img(src=`/img/users/${user.photo}`,alt= `${username}`)
                 span= user.name.split(" ")[0]
         else 
             button.nav__el(id='login') Log in 

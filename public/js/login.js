@@ -2,10 +2,10 @@
 
 const loginBtn = document.getElementById("login");
 
-loginBtn.addEventListener("click", () => {
-  console.log("Hello from login");
-  location.assign("/login");
-});
+if (loginBtn)
+  loginBtn.addEventListener("click", () => {
+    location.assign("/login");
+  });
 
 const loginForm = document.querySelector(".login-form");
 
@@ -20,14 +20,20 @@ const login = async (email, password) => {
       },
     });
 
-    console.log(res.data.data);
+    console.log(res.data);
+    if (res.data.status === "success") {
+      alert("Logged in sucessfully");
+      setTimeout(() => {
+        location.replace("/");
+      }, 1500);
+    }
   } catch (err) {
     throw err;
   }
 };
 
 if (loginForm) {
-  document.addEventListener("submit", async e => {
+  loginForm.addEventListener("submit", async e => {
     try {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -36,7 +42,9 @@ if (loginForm) {
 
       await login(email, password);
     } catch (err) {
+      console.log(err);
       console.log(err.response.data);
+      alert(JSON.stringify(err.response.data));
     }
   });
 }
