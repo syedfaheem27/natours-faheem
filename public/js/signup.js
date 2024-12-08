@@ -1,5 +1,6 @@
 /* eslint-disable */
 import axios from "axios";
+import { showAlert } from "./alert";
 
 export const signUp = async (name, email, password, confirmPassword) => {
   try {
@@ -15,8 +16,9 @@ export const signUp = async (name, email, password, confirmPassword) => {
     });
 
     console.log(res);
+    console.log(res.data.status);
     if (res.data.status === "success") {
-      alert("Signed up sucessfully");
+      showAlert("success", "Signed up successfully");
       setTimeout(() => {
         location.replace("/login");
       }, 1500);

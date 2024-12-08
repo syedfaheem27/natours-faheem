@@ -9,7 +9,7 @@ const catchAsync = require("../utils/catchAsync");
 const { extractValidFields } = require("../utils/extractValidFields");
 const AppError = require("../utils/appError");
 const { sendEmail } = require("../utils/email");
-const generateJwt = require("../utils/generateJwt");
+// const generateJwt = require("../utils/generateJwt");
 const createSendToken = require("../utils/createSendToken");
 
 exports.signUp = catchAsync(async (req, res, next) => {
@@ -28,7 +28,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     status: "success",
-    message: "Successfully signed in",
+    message: "Successfully signed up",
   });
 });
 

@@ -1,5 +1,6 @@
 /*eslint-disable*/
 
+import { hideAlert, showAlert } from "./alert";
 import { login } from "./login";
 import { signUp } from "./signup";
 
@@ -24,7 +25,10 @@ if (loginForm) {
     } catch (err) {
       console.log(err);
       console.log(err.response.data);
-      alert(JSON.stringify(err.response.data));
+      showAlert("error", err.response.data.message);
+      setTimeout(() => {
+        hideAlert();
+      }, 1500);
     }
   });
 }
@@ -50,8 +54,12 @@ if (signUpForm) {
     try {
       await signUp(name, email, password, confrimPassword);
     } catch (err) {
-      alert(JSON.stringify(err.response.data));
-      console.log(err.response.data);
+      console.log(err);
+      //   err.response.data.message;
+      showAlert("error", err.response.data.message);
+      setTimeout(() => {
+        hideAlert();
+      }, 1500);
     }
   });
 }
