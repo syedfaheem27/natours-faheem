@@ -47,6 +47,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (req.headers?.authorization?.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies?.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token)
@@ -63,7 +65,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const user = await User.findById(decoded.id).select("+password");
 
   if (!user)
-    next(
+    return next(
       new AppError(
         "The user belonging to this token no longer exists. Please log in again.",
         401,
@@ -81,6 +83,33 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = user;
 
   //Grant access
+  next();
+});
+
+//This is for the pages rendered in the browser - to protect them
+//Here the idea is not to throw an error and incase the user is not logged in
+// just render the overview page without the user data
+exports.isLoggedIn = exports.protect = catchAsync(async (req, res, next) => {
+  if (req.cookies?.jwt) {
+    //check if token is valid
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET,
+    );
+
+    //check if there's a user with this token
+    const user = await User.findById(decoded.id).select("+password");
+
+    if (!user) return next();
+
+    //check if the user hasn't changed password after the token was issued
+    if (user.hasChangedPasswordAfter(decoded.iat)) return next();
+
+    //making the user object accessible to the pug templates
+    res.locals.user = user;
+    return next();
+  }
+
   next();
 });
 

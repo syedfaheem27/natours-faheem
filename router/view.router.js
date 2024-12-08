@@ -6,8 +6,10 @@ const {
   getLoginPage,
   getSignUpPage,
 } = require("../controllers/view.controller");
+const { isLoggedIn } = require("../controllers/auth.controller");
 
 const router = express.Router();
+router.use(isLoggedIn);
 
 router.get("/", getOverview);
 
