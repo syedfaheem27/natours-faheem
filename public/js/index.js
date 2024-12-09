@@ -1,11 +1,10 @@
 /*eslint-disable*/
 
-import { hideAlert, showAlert } from "./alert";
 import { login } from "./login";
 import { logout } from "./logout";
 import { loadMap } from "./mapbox";
 import { signUp } from "./signup";
-import { updateCurrUser } from "./updateUserDetails";
+import { updateData } from "./updateUserDetails";
 
 const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
@@ -14,6 +13,7 @@ const logoutBtn = document.getElementById("logout");
 const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
 const updateUserForm = document.querySelector(".form-user-data");
+const updateUserPasswordForm = document.querySelector(".form-user-password");
 
 const mapContainer = document.getElementById("map");
 
@@ -69,5 +69,31 @@ if (updateUserForm)
     const name = formData.get("name");
     const email = formData.get("email");
 
-    updateCurrUser(name, email);
+    updateData({ name, email }, "updateMe");
+  });
+
+if (updateUserPasswordForm)
+  updateUserPasswordForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const saveBtn = document.querySelector(".btn-save-password");
+    saveBtn.textContent = "Updating password...";
+    const formData = new FormData(e.target);
+    const currPassword = formData.get("password-current");
+    const password = formData.get("password");
+    const passwordConfirm = formData.get("password-confirm");
+
+    const currPass = document.getElementById("password-current");
+    const pass = document.getElementById("password");
+    const passConf = document.getElementById("password-confirm");
+
+    const data = {
+      prevPassword: currPassword,
+      password,
+      passwordConfirm,
+    };
+    await updateData(data, "updatePassword");
+    saveBtn.textContent = "Save password";
+    currPass.value = "";
+    pass.value = "";
+    passConf.value = "";
   });

@@ -2,15 +2,14 @@
 import axios from "axios";
 import { hideAlert, showAlert } from "./alert";
 
-export const updateCurrUser = async (name, email) => {
+const BASE_URL = "/api/v1/users";
+
+export const updateData = async (data, path) => {
   try {
     const res = await axios({
       method: "PATCH",
-      url: "/api/v1/users/updateMe",
-      data: {
-        name,
-        email,
-      },
+      url: `${BASE_URL}/${path}`,
+      data,
     });
 
     console.log(res);

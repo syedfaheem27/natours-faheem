@@ -596,8 +596,7 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"f2QDv":[function(require,module,exports,__globalThis) {
-/*eslint-disable*/ var _alert = require("./alert");
-var _login = require("./login");
+/*eslint-disable*/ var _login = require("./login");
 var _logout = require("./logout");
 var _mapbox = require("./mapbox");
 var _signup = require("./signup");
@@ -608,6 +607,7 @@ const logoutBtn = document.getElementById("logout");
 const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
 const updateUserForm = document.querySelector(".form-user-data");
+const updateUserPasswordForm = document.querySelector(".form-user-password");
 const mapContainer = document.getElementById("map");
 if (mapContainer) {
     const locations = JSON.parse(mapContainer.dataset.locations);
@@ -645,55 +645,35 @@ if (updateUserForm) updateUserForm.addEventListener("submit", (e)=>{
     const formData = new FormData(e.target);
     const name = formData.get("name");
     const email = formData.get("email");
-    (0, _updateUserDetails.updateCurrUser)(name, email);
+    (0, _updateUserDetails.updateData)({
+        name,
+        email
+    }, "updateMe");
+});
+if (updateUserPasswordForm) updateUserPasswordForm.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const saveBtn = document.querySelector(".btn-save-password");
+    saveBtn.textContent = "Updating password...";
+    const formData = new FormData(e.target);
+    const currPassword = formData.get("password-current");
+    const password = formData.get("password");
+    const passwordConfirm = formData.get("password-confirm");
+    const currPass = document.getElementById("password-current");
+    const pass = document.getElementById("password");
+    const passConf = document.getElementById("password-confirm");
+    const data = {
+        prevPassword: currPassword,
+        password,
+        passwordConfirm
+    };
+    await (0, _updateUserDetails.updateData)(data, "updatePassword");
+    saveBtn.textContent = "Save password";
+    currPass.value = "";
+    pass.value = "";
+    passConf.value = "";
 });
 
-},{"./alert":"kxdiQ","./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz","./updateUserDetails":"aJWzA"}],"kxdiQ":[function(require,module,exports,__globalThis) {
-/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
-parcelHelpers.export(exports, "showAlert", ()=>showAlert);
-const hideAlert = ()=>{
-    const el = document.querySelector(".alert");
-    if (el) el.parentElement.removeChild(el);
-};
-const showAlert = (type, msg)=>{
-    hideAlert();
-    const markup = `<div class='alert alert--${type}'>${msg}</div>`;
-    document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"7yHem":[function(require,module,exports,__globalThis) {
+},{"./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz","./updateUserDetails":"aJWzA"}],"7yHem":[function(require,module,exports,__globalThis) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
@@ -1582,7 +1562,37 @@ function bind(fn, thisArg) {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cpqD8":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"cpqD8":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _utilsJs = require("./../utils.js");
@@ -5642,6 +5652,21 @@ Object.entries(HttpStatusCode).forEach(([key, value])=>{
 });
 exports.default = HttpStatusCode;
 
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kxdiQ":[function(require,module,exports,__globalThis) {
+/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
+parcelHelpers.export(exports, "showAlert", ()=>showAlert);
+const hideAlert = ()=>{
+    const el = document.querySelector(".alert");
+    if (el) el.parentElement.removeChild(el);
+};
+const showAlert = (type, msg)=>{
+    hideAlert();
+    const markup = `<div class='alert alert--${type}'>${msg}</div>`;
+    document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
+};
+
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fNY2o":[function(require,module,exports,__globalThis) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -5745,19 +5770,17 @@ const loadMap = (locations)=>{
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aJWzA":[function(require,module,exports,__globalThis) {
 /*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "updateCurrUser", ()=>updateCurrUser);
+parcelHelpers.export(exports, "updateData", ()=>updateData);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
 var _alert = require("./alert");
-const updateCurrUser = async (name, email)=>{
+const BASE_URL = "/api/v1/users";
+const updateData = async (data, path)=>{
     try {
         const res = await (0, _axiosDefault.default)({
             method: "PATCH",
-            url: "/api/v1/users/updateMe",
-            data: {
-                name,
-                email
-            }
+            url: `${BASE_URL}/${path}`,
+            data
         });
         console.log(res);
         if (res.data.status === "success") (0, _alert.showAlert)("success", "User Data successfully updated.");
