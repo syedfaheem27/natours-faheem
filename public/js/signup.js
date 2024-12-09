@@ -18,7 +18,10 @@ export const signUp = async (name, email, password, confirmPassword) => {
     console.log(res);
     console.log(res.data.status);
     if (res.data.status === "success") {
-      showAlert("success", "Signed up successfully");
+      showAlert(
+        "success",
+        "Signed up successfully. Login to get enhanced benefits.",
+      );
       setTimeout(() => {
         location.replace("/login");
       }, 1500);

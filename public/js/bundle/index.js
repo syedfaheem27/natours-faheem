@@ -604,8 +604,8 @@ var _signup = require("./signup");
 const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
 const logoutBtn = document.getElementById("logout");
-const loginForm = document.querySelector(".login-form");
-const signUpForm = document.querySelector(".signup-form");
+const loginForm = document.querySelector(".form--login");
+const signUpForm = document.querySelector(".form--signup");
 const mapContainer = document.getElementById("map");
 if (mapContainer) {
     const locations = JSON.parse(mapContainer.dataset.locations);
@@ -5667,7 +5667,7 @@ const signUp = async (name, email, password, confirmPassword)=>{
         console.log(res);
         console.log(res.data.status);
         if (res.data.status === "success") {
-            (0, _alert.showAlert)("success", "Signed up successfully");
+            (0, _alert.showAlert)("success", "Signed up successfully. Login to get enhanced benefits.");
             setTimeout(()=>{
                 location.replace("/login");
             }, 1500);

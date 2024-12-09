@@ -6,6 +6,7 @@ const {
   getLoginPage,
   getUserDetail,
   getSignUpPage,
+  updateUserDetail,
 } = require("../controllers/view.controller");
 const {
   isLoggedIn,
@@ -24,5 +25,6 @@ router.get("/logout", isLoggedIn, logOut);
 router.get("/signup", isLoggedIn, getSignUpPage);
 
 router.get("/me", protect, getUserDetail);
+router.post("/submit-user-data", protect, updateUserDetail);
 
 module.exports = router;

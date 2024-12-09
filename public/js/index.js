@@ -10,8 +10,8 @@ const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
 const logoutBtn = document.getElementById("logout");
 
-const loginForm = document.querySelector(".login-form");
-const signUpForm = document.querySelector(".signup-form");
+const loginForm = document.querySelector(".form--login");
+const signUpForm = document.querySelector(".form--signup");
 
 const mapContainer = document.getElementById("map");
 
