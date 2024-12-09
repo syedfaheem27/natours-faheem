@@ -53,7 +53,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (req.headers?.authorization?.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookieswatch?.jwt) {
+  } else if (req.cookies?.jwt) {
     token = req.cookies.jwt;
   }
 
@@ -87,6 +87,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
 
   req.user = user;
+
+  //Since, using it to protect some of the routes responsible for rendering the UI
+  //we add the user to the locals
+  res.locals.user = user;
 
   //Grant access
   next();

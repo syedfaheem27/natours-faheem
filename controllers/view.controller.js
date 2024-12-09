@@ -34,3 +34,9 @@ exports.getLoginPage = (req, res) => {
 exports.getSignUpPage = (req, res) => {
   res.status(200).render("signup");
 };
+
+exports.getUserDetail = (req, res) => {
+  res.status(200).render("account", {
+    title: "Your account details",
+  });
+};
