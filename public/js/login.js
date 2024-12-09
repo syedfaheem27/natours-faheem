@@ -1,6 +1,6 @@
 /* eslint-disable */
 import axios from "axios";
-import { showAlert } from "./alert";
+import { showAlert, hideAlert } from "./alert";
 
 export const login = async (email, password) => {
   try {
@@ -17,10 +17,15 @@ export const login = async (email, password) => {
     if (res.data.status === "success") {
       showAlert("success", "Logged In successfully");
       setTimeout(() => {
-        location.replace("/");
+        location.replace(`/?nocache=${Date.now()}`);
       }, 1500);
     }
   } catch (err) {
-    throw err;
+    console.log(err);
+    console.log(err.response.data);
+    showAlert("error", err.response.data.message);
+    setTimeout(() => {
+      hideAlert();
+    }, 1500);
   }
 };

@@ -5,6 +5,7 @@ import { login } from "./login";
 import { logout } from "./logout";
 import { loadMap } from "./mapbox";
 import { signUp } from "./signup";
+import { updateCurrUser } from "./updateUserDetails";
 
 const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
@@ -12,6 +13,7 @@ const logoutBtn = document.getElementById("logout");
 
 const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
+const updateUserForm = document.querySelector(".form-user-data");
 
 const mapContainer = document.getElementById("map");
 
@@ -27,22 +29,13 @@ if (loginBtn)
   });
 
 if (loginForm) {
-  loginForm.addEventListener("submit", async e => {
-    try {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const email = formData.get("email");
-      const password = formData.get("password");
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
 
-      await login(email, password);
-    } catch (err) {
-      console.log(err);
-      console.log(err.response.data);
-      showAlert("error", err.response.data.message);
-      setTimeout(() => {
-        hideAlert();
-      }, 1500);
-    }
+    login(email, password);
   });
 }
 
@@ -53,7 +46,7 @@ if (signUpBtn)
   });
 
 if (signUpForm) {
-  signUpForm.addEventListener("submit", async e => {
+  signUpForm.addEventListener("submit", e => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const email = formData.get("email");
@@ -61,18 +54,20 @@ if (signUpForm) {
     const confrimPassword = formData.get("password-confirm");
     const name = formData.get("name");
 
-    try {
-      await signUp(name, email, password, confrimPassword);
-    } catch (err) {
-      console.log(err);
-      //   err.response.data.message;
-      showAlert("error", err.response.data.message);
-      setTimeout(() => {
-        hideAlert();
-      }, 1500);
-    }
+    signUp(name, email, password, confrimPassword);
   });
 }
 
 //LOGOUT
 if (logoutBtn) logoutBtn.addEventListener("click", logout);
+
+//UPDATE USER DETAILS
+if (updateUserForm)
+  updateUserForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get("name");
+    const email = formData.get("email");
+
+    updateCurrUser(name, email);
+  });

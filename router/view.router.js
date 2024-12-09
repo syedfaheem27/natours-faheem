@@ -25,6 +25,8 @@ router.get("/logout", isLoggedIn, logOut);
 router.get("/signup", isLoggedIn, getSignUpPage);
 
 router.get("/me", protect, getUserDetail);
-router.post("/submit-user-data", protect, updateUserDetail);
+
+//for updating user detail using HTML forms
+// router.post("/submit-user-data", protect, updateUserDetail);
 
 module.exports = router;

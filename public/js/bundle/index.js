@@ -601,11 +601,13 @@ var _login = require("./login");
 var _logout = require("./logout");
 var _mapbox = require("./mapbox");
 var _signup = require("./signup");
+var _updateUserDetails = require("./updateUserDetails");
 const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
 const logoutBtn = document.getElementById("logout");
 const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
+const updateUserForm = document.querySelector(".form-user-data");
 const mapContainer = document.getElementById("map");
 if (mapContainer) {
     const locations = JSON.parse(mapContainer.dataset.locations);
@@ -615,48 +617,38 @@ if (mapContainer) {
 if (loginBtn) loginBtn.addEventListener("click", ()=>{
     location.assign("/login");
 });
-if (loginForm) loginForm.addEventListener("submit", async (e)=>{
-    try {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const email = formData.get("email");
-        const password = formData.get("password");
-        await (0, _login.login)(email, password);
-    } catch (err) {
-        console.log(err);
-        console.log(err.response.data);
-        (0, _alert.showAlert)("error", err.response.data.message);
-        setTimeout(()=>{
-            (0, _alert.hideAlert)();
-        }, 1500);
-    }
+if (loginForm) loginForm.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    (0, _login.login)(email, password);
 });
 // SIGN UP
 if (signUpBtn) signUpBtn.addEventListener("click", ()=>{
     location.assign("/signup");
 });
-if (signUpForm) signUpForm.addEventListener("submit", async (e)=>{
+if (signUpForm) signUpForm.addEventListener("submit", (e)=>{
     e.preventDefault();
     const formData = new FormData(e.target);
     const email = formData.get("email");
     const password = formData.get("password");
     const confrimPassword = formData.get("password-confirm");
     const name = formData.get("name");
-    try {
-        await (0, _signup.signUp)(name, email, password, confrimPassword);
-    } catch (err) {
-        console.log(err);
-        //   err.response.data.message;
-        (0, _alert.showAlert)("error", err.response.data.message);
-        setTimeout(()=>{
-            (0, _alert.hideAlert)();
-        }, 1500);
-    }
+    (0, _signup.signUp)(name, email, password, confrimPassword);
 });
 //LOGOUT
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _logout.logout));
+//UPDATE USER DETAILS
+if (updateUserForm) updateUserForm.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    (0, _updateUserDetails.updateCurrUser)(name, email);
+});
 
-},{"./alert":"kxdiQ","./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz"}],"kxdiQ":[function(require,module,exports,__globalThis) {
+},{"./alert":"kxdiQ","./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz","./updateUserDetails":"aJWzA"}],"kxdiQ":[function(require,module,exports,__globalThis) {
 /*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "hideAlert", ()=>hideAlert);
@@ -722,11 +714,16 @@ const login = async (email, password)=>{
         if (res.data.status === "success") {
             (0, _alert.showAlert)("success", "Logged In successfully");
             setTimeout(()=>{
-                location.replace("/");
+                location.replace(`/?nocache=${Date.now()}`);
             }, 1500);
         }
     } catch (err) {
-        throw err;
+        console.log(err);
+        console.log(err.response.data);
+        (0, _alert.showAlert)("error", err.response.data.message);
+        setTimeout(()=>{
+            (0, _alert.hideAlert)();
+        }, 1500);
     }
 };
 
@@ -5667,13 +5664,18 @@ const signUp = async (name, email, password, confirmPassword)=>{
         console.log(res);
         console.log(res.data.status);
         if (res.data.status === "success") {
-            (0, _alert.showAlert)("success", "Signed up successfully. Login to get enhanced benefits.");
+            (0, _alert.showAlert)("success", "Signed up successfully. Login to get access");
             setTimeout(()=>{
                 location.replace("/login");
             }, 1500);
         }
     } catch (err) {
-        throw err;
+        console.log(err);
+        //   err.response.data.message;
+        (0, _alert.showAlert)("error", err.response.data.message);
+        setTimeout(()=>{
+            (0, _alert.hideAlert)();
+        }, 1500);
     }
 };
 
@@ -5740,6 +5742,35 @@ const loadMap = (locations)=>{
     });
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["5A6b5","f2QDv"], "f2QDv", "parcelRequire94c2")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aJWzA":[function(require,module,exports,__globalThis) {
+/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "updateCurrUser", ()=>updateCurrUser);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _alert = require("./alert");
+const updateCurrUser = async (name, email)=>{
+    try {
+        const res = await (0, _axiosDefault.default)({
+            method: "PATCH",
+            url: "/api/v1/users/updateMe",
+            data: {
+                name,
+                email
+            }
+        });
+        console.log(res);
+        if (res.data.status === "success") (0, _alert.showAlert)("success", "User Data successfully updated.");
+    } catch (err) {
+        console.log(err.response.data);
+        (0, _alert.showAlert)("error", err.response.data.message);
+    } finally{
+        setTimeout(()=>{
+            (0, _alert.hideAlert)();
+        }, 1500);
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","axios":"jo6P5","./alert":"kxdiQ"}]},["5A6b5","f2QDv"], "f2QDv", "parcelRequire94c2")
 
 //# sourceMappingURL=index.js.map
