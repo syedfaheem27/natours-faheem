@@ -59,7 +59,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       ),
     );
 
-  console.log(req.file);
+  // console.log(req.file);
 
   const toUpdate = extractValidFields(req.body, ["name", "email"]);
   if (req.file) {
@@ -70,6 +70,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
+
+  //TODO: Here,we can check if the user updated his photo
+  // and if he did, just delete the previous photo from users folder
+
+  //we will do that in the post save hook
+  //TODO: change the implementation of updateMe function by using the save method on the documents
+  //rather than using query - so that we can delete the old photo
 
   res.status(201).json({
     status: "success",

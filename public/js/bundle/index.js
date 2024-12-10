@@ -644,13 +644,16 @@ if (logoutBtn) logoutBtn.addEventListener("click", (0, _logout.logout));
 //UPDATE USER DETAILS
 if (updateUserForm) updateUserForm.addEventListener("submit", (e)=>{
     e.preventDefault();
+    //creating a multi-part form data
     const formData = new FormData();
     formData.append("name", document.getElementById("name").value);
     formData.append("email", document.getElementById("email").value);
     formData.append("photo", document.getElementById("photo").files[0]);
-    // const name = formData.get("name");
-    // const email = formData.get("email");
     (0, _updateUserDetails.updateData)(formData, "updateMe");
+});
+//PREVIEW IMAGE
+if (photoInput) photoInput.addEventListener("change", ()=>{
+    (0, _imagePreview.previewImage)(photoInput, ".form__user-photo");
 });
 if (updateUserPasswordForm) updateUserPasswordForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
@@ -673,10 +676,6 @@ if (updateUserPasswordForm) updateUserPasswordForm.addEventListener("submit", as
     currPass.value = "";
     pass.value = "";
     passConf.value = "";
-});
-//PREVIEW IMAGE
-if (photoInput) photoInput.addEventListener("change", ()=>{
-    (0, _imagePreview.previewImage)(photoInput, ".form__user-photo");
 });
 
 },{"./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz","./updateUserDetails":"aJWzA","./imagePreview":"eB6km"}],"7yHem":[function(require,module,exports,__globalThis) {

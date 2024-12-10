@@ -68,15 +68,20 @@ if (logoutBtn) logoutBtn.addEventListener("click", logout);
 if (updateUserForm)
   updateUserForm.addEventListener("submit", e => {
     e.preventDefault();
+
+    //creating a multi-part form data
     const formData = new FormData();
     formData.append("name", document.getElementById("name").value);
     formData.append("email", document.getElementById("email").value);
     formData.append("photo", document.getElementById("photo").files[0]);
 
-    // const name = formData.get("name");
-    // const email = formData.get("email");
-
     updateData(formData, "updateMe");
+  });
+
+//PREVIEW IMAGE
+if (photoInput)
+  photoInput.addEventListener("change", () => {
+    previewImage(photoInput, ".form__user-photo");
   });
 
 if (updateUserPasswordForm)
@@ -103,10 +108,4 @@ if (updateUserPasswordForm)
     currPass.value = "";
     pass.value = "";
     passConf.value = "";
-  });
-
-//PREVIEW IMAGE
-if (photoInput)
-  photoInput.addEventListener("change", () => {
-    previewImage(photoInput, ".form__user-photo");
   });

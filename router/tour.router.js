@@ -10,6 +10,8 @@ const {
   getTourStats,
   getToursWithin,
   getTourDistances,
+  uploadTourPics,
+  resizeTourPhotos,
 } = require("../controllers/tours.controller");
 
 const reviewRouter = require("./review.router");
@@ -60,6 +62,8 @@ router
     protect,
     restrictTo("admin", "lead-guide", "guide"),
     // validate(updateTourSchema),
+    uploadTourPics,
+    resizeTourPhotos,
     updateTour,
   )
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);

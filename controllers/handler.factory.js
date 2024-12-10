@@ -17,6 +17,7 @@ exports.deleteOne = Model =>
 
 exports.updateOne = (Model, validFields) =>
   catchAsync(async (req, res, next) => {
+    console.log(req.body);
     let body;
     if (validFields?.length > 0) {
       body = extractValidFields(req.body, [...validFields]);

@@ -125,8 +125,11 @@ userSchema.pre("save", function (next) {
 
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
+
   next();
 });
+
+//TODO: Deleting the user pics when the pic is uploaded
 
 const userModel = mongoose.model("User", userSchema);
 module.exports = userModel;
