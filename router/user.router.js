@@ -7,6 +7,7 @@ const {
   deleteUser,
   updateMe,
   deleteMe,
+  uploadUserPhoto,
 } = require("../controllers/users.controller");
 const {
   signUp,
@@ -46,7 +47,7 @@ router.use(protect);
 
 router.get("/me", getMe, getUser);
 router.patch("/updatePassword", updateUserPassword);
-router.patch("/updateMe", updateMe);
+router.patch("/updateMe", uploadUserPhoto, updateMe);
 router.delete("/deleteMe", deleteMe);
 
 //for admin and lead guides and guides

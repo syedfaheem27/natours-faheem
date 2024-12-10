@@ -1,8 +1,35 @@
+const multer = require("multer");
+
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user.model");
 const { extractValidFields } = require("../utils/extractValidFields");
 const AppError = require("../utils/appError");
 const { deleteOne, updateOne, getOne, getAll } = require("./handler.factory");
+
+const diskStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/img/users");
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    const name = `user-${req.user.id}-${Date.now()}.${ext}`;
+    cb(null, name);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Please upload an image file.", 400), false);
+  }
+};
+const upload = multer({
+  storage: diskStorage,
+  fileFilter,
+});
+
+exports.uploadUserPhoto = upload.single("photo");
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   const { password, passwordConfirm } = req.body;
@@ -16,6 +43,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
 
   const toUpdate = extractValidFields(req.body, ["name", "email"]);
+  if (req.file) {
+    toUpdate.photo = req.file.filename;
+  }
 
   const user = await User.findByIdAndUpdate(req.user._id, toUpdate, {
     new: true,
