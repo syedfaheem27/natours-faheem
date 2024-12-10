@@ -1,4 +1,5 @@
 const multer = require("multer");
+const sharp = require("sharp");
 
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user.model");
@@ -6,16 +7,18 @@ const { extractValidFields } = require("../utils/extractValidFields");
 const AppError = require("../utils/appError");
 const { deleteOne, updateOne, getOne, getAll } = require("./handler.factory");
 
-const diskStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/img/users");
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    const name = `user-${req.user.id}-${Date.now()}.${ext}`;
-    cb(null, name);
-  },
-});
+// const diskStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "public/img/users");
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split("/")[1];
+//     const name = `user-${req.user.id}-${Date.now()}.${ext}`;
+//     cb(null, name);
+//   },
+// });
+
+const memoryStorage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
@@ -25,11 +28,25 @@ const fileFilter = (req, file, cb) => {
   }
 };
 const upload = multer({
-  storage: diskStorage,
+  storage: memoryStorage,
   fileFilter,
 });
 
 exports.uploadUserPhoto = upload.single("photo");
+
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  next();
+});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   const { password, passwordConfirm } = req.body;
@@ -42,9 +59,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       ),
     );
 
+  console.log(req.file);
+
   const toUpdate = extractValidFields(req.body, ["name", "email"]);
   if (req.file) {
-    toUpdate.photo = req.file.filename;
+    toUpdate.photo = req.file?.filename;
   }
 
   const user = await User.findByIdAndUpdate(req.user._id, toUpdate, {
