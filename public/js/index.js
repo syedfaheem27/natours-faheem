@@ -68,11 +68,15 @@ if (logoutBtn) logoutBtn.addEventListener("click", logout);
 if (updateUserForm)
   updateUserForm.addEventListener("submit", e => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const name = formData.get("name");
-    const email = formData.get("email");
+    const formData = new FormData();
+    formData.append("name", document.getElementById("name").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("photo", document.getElementById("photo").files[0]);
 
-    updateData({ name, email }, "updateMe");
+    // const name = formData.get("name");
+    // const email = formData.get("email");
+
+    updateData(formData, "updateMe");
   });
 
 if (updateUserPasswordForm)

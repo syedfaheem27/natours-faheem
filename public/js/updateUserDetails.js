@@ -13,8 +13,16 @@ export const updateData = async (data, path) => {
     });
 
     console.log(res);
-    if (res.data.status === "success")
+    if (res.data.status === "success") {
       showAlert("success", "User Data successfully updated.");
+      //Previewing the image in the header
+      document
+        .querySelector(".nav__user-img")
+        .setAttribute(
+          "src",
+          document.querySelector(".form__user-photo").getAttribute("src"),
+        );
+    }
   } catch (err) {
     console.log(err.response.data);
     showAlert("error", err.response.data.message);

@@ -644,13 +644,13 @@ if (logoutBtn) logoutBtn.addEventListener("click", (0, _logout.logout));
 //UPDATE USER DETAILS
 if (updateUserForm) updateUserForm.addEventListener("submit", (e)=>{
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const name = formData.get("name");
-    const email = formData.get("email");
-    (0, _updateUserDetails.updateData)({
-        name,
-        email
-    }, "updateMe");
+    const formData = new FormData();
+    formData.append("name", document.getElementById("name").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("photo", document.getElementById("photo").files[0]);
+    // const name = formData.get("name");
+    // const email = formData.get("email");
+    (0, _updateUserDetails.updateData)(formData, "updateMe");
 });
 if (updateUserPasswordForm) updateUserPasswordForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
@@ -5789,7 +5789,11 @@ const updateData = async (data, path)=>{
             data
         });
         console.log(res);
-        if (res.data.status === "success") (0, _alert.showAlert)("success", "User Data successfully updated.");
+        if (res.data.status === "success") {
+            (0, _alert.showAlert)("success", "User Data successfully updated.");
+            //Previewing the image in the header
+            document.querySelector(".nav__user-img").setAttribute("src", document.querySelector(".form__user-photo").getAttribute("src"));
+        }
     } catch (err) {
         console.log(err.response.data);
         (0, _alert.showAlert)("error", err.response.data.message);
