@@ -1,5 +1,6 @@
 /*eslint-disable*/
 
+import { previewImage } from "./imagePreview";
 import { login } from "./login";
 import { logout } from "./logout";
 import { loadMap } from "./mapbox";
@@ -14,6 +15,8 @@ const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
 const updateUserForm = document.querySelector(".form-user-data");
 const updateUserPasswordForm = document.querySelector(".form-user-password");
+
+const photoInput = document.getElementById("photo");
 
 const mapContainer = document.getElementById("map");
 
@@ -96,4 +99,10 @@ if (updateUserPasswordForm)
     currPass.value = "";
     pass.value = "";
     passConf.value = "";
+  });
+
+//PREVIEW IMAGE
+if (photoInput)
+  photoInput.addEventListener("change", () => {
+    previewImage(photoInput, ".form__user-photo");
   });
