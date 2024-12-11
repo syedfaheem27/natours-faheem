@@ -630,14 +630,18 @@ if (loginForm) loginForm.addEventListener("submit", (e)=>{
 if (signUpBtn) signUpBtn.addEventListener("click", ()=>{
     location.assign("/signup");
 });
-if (signUpForm) signUpForm.addEventListener("submit", (e)=>{
+if (signUpForm) signUpForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
+    const btnSignUp = document.querySelector(".btn-add-create-user");
+    console.log(btnSignUp);
+    btnSignUp.textContent = "Signing up...";
     const formData = new FormData(e.target);
     const email = formData.get("email");
     const password = formData.get("password");
     const confrimPassword = formData.get("password-confirm");
     const name = formData.get("name");
-    (0, _signup.signUp)(name, email, password, confrimPassword);
+    await (0, _signup.signUp)(name, email, password, confrimPassword);
+    btnSignUp.textContent = "Sign up";
 });
 //LOGOUT
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _logout.logout));
@@ -5691,12 +5695,12 @@ const signUp = async (name, email, password, confirmPassword)=>{
                 passwordConfirm: confirmPassword
             }
         });
-        console.log(res);
-        console.log(res.data.status);
+        // console.log(res);
+        // console.log(res.data.status);
         if (res.data.status === "success") {
-            (0, _alert.showAlert)("success", "Signed up successfully. Login to get access");
+            (0, _alert.showAlert)("success", "Signed up successfully.");
             setTimeout(()=>{
-                location.replace("/login");
+                location.replace("/me");
             }, 1500);
         }
     } catch (err) {

@@ -15,12 +15,12 @@ export const signUp = async (name, email, password, confirmPassword) => {
       },
     });
 
-    console.log(res);
-    console.log(res.data.status);
+    // console.log(res);
+    // console.log(res.data.status);
     if (res.data.status === "success") {
-      showAlert("success", "Signed up successfully. Login to get access");
+      showAlert("success", "Signed up successfully.");
       setTimeout(() => {
-        location.replace("/login");
+        location.replace("/me");
       }, 1500);
     }
   } catch (err) {
