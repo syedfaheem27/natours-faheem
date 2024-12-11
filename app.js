@@ -13,6 +13,7 @@ const tourRouter = require("./router/tour.router");
 const userRouter = require("./router/user.router");
 const reviewRouter = require("./router/review.router");
 const viewRouter = require("./router/view.router");
+const bookingRouter = require("./router/booking.router");
 
 const errorHandler = require("./controllers/error.controller");
 const AppError = require("./utils/appError");
@@ -100,6 +101,7 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/bookings", bookingRouter);
 
 //View Routes
 app.use("/", viewRouter);

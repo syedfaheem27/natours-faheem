@@ -31,8 +31,8 @@ This app is a pet project, built for the express purpose of honing my skills in 
 - **ParcelJS** - Blazing fast, zero configuration web application bundler
 - **Stripe** - Online payment API and Making payments on the app.
 - **Postman** - API testing
-- **Mailtrap & Sendgrid** - Email delivery platform
-- **Render** - Cloud platform
+- **Mailtrap & Brevo(formerly SendInBlue)** - Email delivery platform
+- **Render** - Cloud platform for deploying server side logic
 - **Mapbox** - Displaying the different locations of each tour.
 
 ## LogIn as a user
@@ -46,3 +46,6 @@ use **email** : faheem@mailsac.com and **password** : test1234
 - Add a Reviews page that lets you take a look at all of your reviewed tours
 
 [Live](https://natours-fam.onrender.com)
+
+//TODO: Remove old pics when new ones are uploaded
+//TODO: Create a view for resetting password

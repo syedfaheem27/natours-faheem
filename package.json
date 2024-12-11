@@ -30,7 +30,8 @@
     "nodemailer": "^6.9.16",
     "pug": "^3.0.3",
     "sharp": "^0.33.5",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "stripe": "^17.4.0"
   },
   "devDependencies": {
     "buffer": "^6.0.3",
