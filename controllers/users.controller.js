@@ -66,6 +66,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     toUpdate.photo = req.file?.filename;
   }
 
+  //NEW Implementation
+  // const user = req.user;
+
+  // for (const [key, val] of Object.entries(toUpdate)) {
+  //   user[key] = val;
+  // }
+  // // keyVal.foreach(([key, value]) => {
+  // //   user[key] = value;
+  // // });
+
+  // await user.save({ validateBeforeSave: false });
+
+  //OLD Implementation
   const user = await User.findByIdAndUpdate(req.user._id, toUpdate, {
     new: true,
     runValidators: true,

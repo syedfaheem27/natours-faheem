@@ -123,6 +123,18 @@ userSchema.pre("save", function (next) {
   next();
 });
 
+// Delete exisiting user
+// userSchema.pre("save", async function (next) {
+//   console.log(this.get("photo"));
+
+//   next();
+// });
+
+// userSchema.post("save", function (doc, next) {
+//   console.log(doc.photo);
+//   next();
+// });
+
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
 

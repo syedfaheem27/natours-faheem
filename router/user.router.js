@@ -48,7 +48,9 @@ router.use(protect);
 
 router.get("/me", getMe, getUser);
 router.patch("/updatePassword", updateUserPassword);
+// router.patch("/updateMe", uploadUserPhoto, resizeUserPhoto, updateMe);
 router.patch("/updateMe", uploadUserPhoto, resizeUserPhoto, updateMe);
+
 router.delete("/deleteMe", deleteMe);
 
 //for admin and lead guides and guides
