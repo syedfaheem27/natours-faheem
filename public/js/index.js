@@ -6,10 +6,12 @@ import { logout } from "./logout";
 import { loadMap } from "./mapbox";
 import { signUp } from "./signup";
 import { updateData } from "./updateUserDetails";
+import { bookTour } from "./bookTour";
 
 const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
 const logoutBtn = document.getElementById("logout");
+const bookTourBtn = document.getElementById("btn-book-tour");
 
 const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
@@ -112,4 +114,11 @@ if (updateUserPasswordForm)
     currPass.value = "";
     pass.value = "";
     passConf.value = "";
+  });
+
+if (bookTourBtn)
+  bookTourBtn.addEventListener("click", async e => {
+    e.target.textContent = "Booking...";
+    const { tourId } = e.target.dataset;
+    await bookTour(tourId);
   });

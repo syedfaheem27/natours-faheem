@@ -18,7 +18,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const price = await stripe.prices.create({
     product: product.id,
     unit_amount: tour.price * 100,
-    currency: "inr",
+    currency: "usd",
   });
 
   const session = await stripe.checkout.sessions.create({
@@ -35,5 +35,10 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     ],
   });
 
-  res.redirect(303, session.url);
+  res.status(200).json({
+    status: "success",
+    data: {
+      session,
+    },
+  });
 });

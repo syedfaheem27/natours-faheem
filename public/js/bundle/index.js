@@ -602,9 +602,11 @@ var _logout = require("./logout");
 var _mapbox = require("./mapbox");
 var _signup = require("./signup");
 var _updateUserDetails = require("./updateUserDetails");
+var _bookTour = require("./bookTour");
 const loginBtn = document.getElementById("login");
 const signUpBtn = document.getElementById("sign-up");
 const logoutBtn = document.getElementById("logout");
+const bookTourBtn = document.getElementById("btn-book-tour");
 const loginForm = document.querySelector(".form--login");
 const signUpForm = document.querySelector(".form--signup");
 const updateUserForm = document.querySelector(".form-user-data");
@@ -681,8 +683,13 @@ if (updateUserPasswordForm) updateUserPasswordForm.addEventListener("submit", as
     pass.value = "";
     passConf.value = "";
 });
+if (bookTourBtn) bookTourBtn.addEventListener("click", async (e)=>{
+    e.target.textContent = "Booking...";
+    const { tourId } = e.target.dataset;
+    await (0, _bookTour.bookTour)(tourId);
+});
 
-},{"./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz","./updateUserDetails":"aJWzA","./imagePreview":"eB6km"}],"7yHem":[function(require,module,exports,__globalThis) {
+},{"./login":"7yHem","./signup":"fNY2o","./logout":"1ftRF","./mapbox":"3zDlz","./updateUserDetails":"aJWzA","./imagePreview":"eB6km","./bookTour":"7d23e"}],"7yHem":[function(require,module,exports,__globalThis) {
 /* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "login", ()=>login);
@@ -5821,6 +5828,21 @@ const previewImage = (inputEl, previewSelector)=>{
     if (files) fileReader.readAsDataURL(files[0]);
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["5A6b5","f2QDv"], "f2QDv", "parcelRequire94c2")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7d23e":[function(require,module,exports,__globalThis) {
+/*eslint-disable*/ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "bookTour", ()=>bookTour);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+const bookTour = async (tourId)=>{
+    try {
+        const res = await (0, _axiosDefault.default)(`/api/v1/bookings/checkout-session/${tourId}`);
+        if (res.data.status === "success") location.replace(res.data.data.session.url);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+},{"axios":"jo6P5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["5A6b5","f2QDv"], "f2QDv", "parcelRequire94c2")
 
 //# sourceMappingURL=index.js.map
