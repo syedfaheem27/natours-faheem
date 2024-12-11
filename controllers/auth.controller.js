@@ -8,9 +8,10 @@ const catchAsync = require("../utils/catchAsync");
 
 const { extractValidFields } = require("../utils/extractValidFields");
 const AppError = require("../utils/appError");
-const { sendEmail } = require("../utils/email");
+// const { sendEmail } = require("../utils/email");
 // const generateJwt = require("../utils/generateJwt");
 const createSendToken = require("../utils/createSendToken");
+const Email = require("../utils/email");
 
 exports.signUp = catchAsync(async (req, res, next) => {
   const body = extractValidFields(req.body, [
@@ -22,14 +23,17 @@ exports.signUp = catchAsync(async (req, res, next) => {
   ]);
 
   const user = await User.create(body);
+  const url = `${req.protocol}://${req.get("host")}/me`;
+
+  await Email.sendWelcome("welcome", "Welcome mail", user, url);
 
   //Don't send a token upon signup
-  // createSendToken(res, user);
+  createSendToken(res, user);
 
-  res.status(201).json({
-    status: "success",
-    message: "Successfully signed up",
-  });
+  // res.status(201).json({
+  //   status: "success",
+  //   message: "Successfully signed up",
+  // });
 });
 
 exports.logIn = catchAsync(async (req, res, next) => {
@@ -173,11 +177,15 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetUrl}.\nIf you didn't forget your password, please ignore this email!`;
 
   try {
-    await sendEmail({
-      to: user.email,
-      subject: "Your password reset token (valid for 10 min)",
-      message,
-    });
+    // await sendEmail({
+    //   to: user.email,
+    //   subject: "Your password reset token (valid for 10 min)",
+    //   message,
+    // });
+
+    const subject = "Your password reset token (valid for 10 min)";
+
+    await Email.sendResetPassword("resetPassword", subject, req.user, url);
 
     res.status(200).json({
       status: "success",

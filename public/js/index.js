@@ -49,15 +49,19 @@ if (signUpBtn)
   });
 
 if (signUpForm) {
-  signUpForm.addEventListener("submit", e => {
+  signUpForm.addEventListener("submit", async e => {
     e.preventDefault();
+    const btnSignUp = document.querySelector(".btn-add-create-user");
+    console.log(btnSignUp);
+    btnSignUp.textContent = "Signing up...";
     const formData = new FormData(e.target);
     const email = formData.get("email");
     const password = formData.get("password");
     const confrimPassword = formData.get("password-confirm");
     const name = formData.get("name");
 
-    signUp(name, email, password, confrimPassword);
+    await signUp(name, email, password, confrimPassword);
+    btnSignUp.textContent = "Sign up";
   });
 }
 
