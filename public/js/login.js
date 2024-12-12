@@ -13,7 +13,6 @@ export const login = async (email, password) => {
       },
     });
 
-    console.log(res.data);
     if (res.data.status === "success") {
       showAlert("success", "Logged In successfully");
       setTimeout(() => {
@@ -21,7 +20,6 @@ export const login = async (email, password) => {
       }, 1500);
     }
   } catch (err) {
-    console.log(err);
     console.log(err.response.data);
     showAlert("error", err.response.data.message);
     setTimeout(() => {

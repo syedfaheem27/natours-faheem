@@ -17,7 +17,6 @@ exports.deleteOne = Model =>
 
 exports.updateOne = (Model, validFields) =>
   catchAsync(async (req, res, next) => {
-    console.log(req.body);
     let body;
     if (validFields?.length > 0) {
       body = extractValidFields(req.body, [...validFields]);
@@ -61,7 +60,6 @@ exports.getOne = (Model, popOptionsArr) =>
 
 exports.getAll = (Model, initialFilter) =>
   catchAsync(async (req, res, next) => {
-    console.log(initialFilter);
     let initQuery;
     if (initialFilter) initQuery = Model.find(initialFilter);
     else initQuery = Model.find();

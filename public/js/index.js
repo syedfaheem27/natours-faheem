@@ -54,7 +54,6 @@ if (signUpForm) {
   signUpForm.addEventListener("submit", async e => {
     e.preventDefault();
     const btnSignUp = document.querySelector(".btn-add-create-user");
-    console.log(btnSignUp);
     btnSignUp.textContent = "Signing up...";
     const formData = new FormData(e.target);
     const email = formData.get("email");

@@ -12,7 +12,6 @@ export const updateData = async (data, path) => {
       data,
     });
 
-    console.log(res);
     if (res.data.status === "success") {
       showAlert("success", "User Data successfully updated.");
       //Previewing the image in the header

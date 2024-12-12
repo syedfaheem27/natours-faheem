@@ -61,8 +61,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.cookies.jwt;
   }
 
-  // console.log(token);
-
   if (!token)
     return next(
       new AppError(
@@ -126,7 +124,6 @@ exports.isLoggedIn = async (req, res, next) => {
       res.locals.user = user;
       return next();
     } catch (err) {
-      console.log(err);
       return next();
     }
   }
@@ -136,7 +133,6 @@ exports.isLoggedIn = async (req, res, next) => {
 
 //logging out users from the website
 exports.logOut = (req, res) => {
-  console.log(req);
   res.cookie("jwt", "loggedOut", {
     expires: new Date(Date.now() + 10 * 1000),
   });

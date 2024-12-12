@@ -169,14 +169,13 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-tourSchema.post(/^find/, function (_, next) {
-  console.log(`The query took ${Date.now() - this.start} milliseconds`);
+// tourSchema.post(/^find/, function (_, next) {
+//   console.log(`The query took ${Date.now() - this.start} milliseconds`);
 
-  next();
-});
+//   next();
+// });
 
 tourSchema.pre("aggregate", function (next) {
-  // console.log();
   //This logic is here because in the aggregation pipeline,
   //the geoNear stage should be the first
   if (this.pipeline().find(stage => stage.$geoNear !== undefined))
