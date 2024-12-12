@@ -5,6 +5,7 @@ const bookingSchema = new mongoose.Schema(
     tour: {
       type: mongoose.Schema.ObjectId,
       ref: "Tour",
+      unique: true,
       required: [true, "A booking must have a corresponding tour"],
     },
 
@@ -59,6 +60,8 @@ const bookingSchema = new mongoose.Schema(
 //   foreignField: "_id",
 //   localField: "user",
 // });
+
+bookingSchema.index({ user: 1 });
 
 const bookingModel = mongoose.model("Booking", bookingSchema);
 

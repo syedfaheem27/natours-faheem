@@ -29,7 +29,9 @@ router.get("/logout", isLoggedIn, logOut);
 router.get("/signup", isLoggedIn, getSignUpPage);
 
 router.get("/me", protect, getUserDetail);
-router.get("/myBookings", protect, getMyBookings);
+router.get("/myBookings", protect, (req, res, next) =>
+  getMyBookings()(req, res, next),
+);
 
 //for updating user detail using HTML forms
 // router.post("/submit-user-data", protect, updateUserDetail);
