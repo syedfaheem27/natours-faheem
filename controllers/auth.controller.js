@@ -61,7 +61,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.cookies.jwt;
   }
 
-  if (!token)
+  if (token === "loggedOut" || !token)
     return next(
       new AppError(
         "No Authentication token found. Please log in again to get a token.",

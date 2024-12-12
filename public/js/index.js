@@ -119,5 +119,6 @@ if (bookTourBtn)
   bookTourBtn.addEventListener("click", async e => {
     e.target.textContent = "Booking...";
     const { tourId } = e.target.dataset;
+    console.log(tourId);
     await bookTour(tourId);
   });
