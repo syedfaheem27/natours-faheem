@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import axios from "axios";
+// import axios from "axios";
 import { hideAlert, showAlert } from "./alert";
 
 const BASE_URL = "/api/v1/users";

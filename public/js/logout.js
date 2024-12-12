@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import axios from "axios";
+// import axios from "axios";
 import { showAlert, hideAlert } from "./alert";
 
 export const logout = async () => {

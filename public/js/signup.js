@@ -1,5 +1,5 @@
 /* eslint-disable */
-import axios from "axios";
+// import axios from "axios";
 import { hideAlert, showAlert } from "./alert";
 
 export const signUp = async (name, email, password, confirmPassword) => {

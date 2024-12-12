@@ -12,7 +12,6 @@
   "author": "Syed Faheem",
   "license": "ISC",
   "dependencies": {
-    "@stripe/stripe-js": "^5.2.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
@@ -51,6 +50,11 @@
   },
   "engines": {
     "node": ">=10.0"
+  },
+  "targets": {
+    "default": {
+      "outputFormat": "esmodule"
+    }
   },
   "browserlist": "> 0.5%, last 2 versions, not dead"
 }
