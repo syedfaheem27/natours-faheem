@@ -39,3 +39,12 @@ process.on("unhandledRejection", err => {
     process.exit(1);
   });
 });
+
+//SIGTERM Signal emitted by render as well
+process.on("SIGTERM", () => {
+  console.log("Shutting down...");
+
+  server.close(() => {
+    console.log("Terminating all the processes...");
+  });
+});

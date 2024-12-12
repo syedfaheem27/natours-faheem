@@ -8,6 +8,8 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
 const cookieParser = require("cookie-parser");
+const compression = require("compression");
+const cors = require("cors");
 
 const tourRouter = require("./router/tour.router");
 const userRouter = require("./router/user.router");
@@ -24,6 +26,12 @@ app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static(path.join(__dirname, "public")));
+
+//Not sufficient for non simple requests like PUT,PATCH,DELETE
+app.use(cors());
+
+//For non simple requests, you need to configure a preflight request
+app.options("*", cors());
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 15 minutes
@@ -79,6 +87,8 @@ app.use(
 app.use(express.json({ limit: "10kb" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+app.use(compression());
 
 app.use(mongoSanitize());
 
