@@ -86,7 +86,7 @@ app.use(
 
 //WebHook integration
 app.post(
-  "/webhook-checkout",
+  "/webhook",
   express.raw({ type: "application/json" }),
   webhookCheckout,
 );
