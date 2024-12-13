@@ -1,6 +1,7 @@
 const path = require("path");
 
 const express = require("express");
+const stripe = require("stripe");
 
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
@@ -19,6 +20,7 @@ const bookingRouter = require("./router/booking.router");
 
 const errorHandler = require("./controllers/error.controller");
 const AppError = require("./utils/appError");
+const { createBookingCheckout } = require("./controllers/bookings.controller");
 
 const app = express();
 
@@ -81,6 +83,37 @@ app.use(
       },
     },
   }),
+);
+
+//WebHook integration
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  (req, res, next) => {
+    const sig = req.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET,
+      );
+    } catch (err) {
+      res.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    if (event.type === "checkout.session.completed") {
+      createBookingCheckout(event.data.object);
+    } else {
+      console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.send();
+  },
 );
 
 //parsing request body

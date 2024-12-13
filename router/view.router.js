@@ -14,13 +14,17 @@ const {
   protect,
 } = require("../controllers/auth.controller");
 const {
-  createBookingCheckout,
+  // createBookingCheckout,
   getMyBookings,
 } = require("../controllers/bookings.controller");
 
 const router = express.Router();
 
-router.get("/", createBookingCheckout, isLoggedIn, getOverview);
+//Before implementing stripe checkout
+// router.get("/", createBookingCheckout, isLoggedIn, getOverview);
+
+//After implementing stripe webhook
+router.get("/", isLoggedIn, getOverview);
 
 router.get("/tour/:slug", isLoggedIn, getTourDetail);
 
