@@ -49,3 +49,7 @@ use **email** : faheem@mailsac.com and **password** : test1234
 
 //TODO: Remove old pics when new ones are uploaded
 //TODO: Create a view for resetting password
+//TODO: Prevent duplicate tour bookings before the said date by the same user
+//TODO: Email confirmation
+//TODO:Improve security of the application by using refresh tokens
+//TODO: Add a chatbot
